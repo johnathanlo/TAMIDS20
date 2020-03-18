@@ -4,6 +4,8 @@ FlightDelays$QUARTER <- as.factor(FlightDelays$QUARTER)
 FlightDelays$MONTH <- as.factor(FlightDelays$MONTH)
 FlightDelays$DAY_OF_MONTH <- as.factor(FlightDelays$DAY_OF_MONTH)
 FlightDelays$DAY_OF_WEEK <- as.factor(FlightDelays$DAY_OF_WEEK)
+FlightDelays$ARR_DELAY[is.na(FlightDelays$ARR_DELAY)]<- 0
+FlightDelays$LATE_ARR <- ifelse(FlightDelays$ARR_DELAY>=0, FlightDelays$ARR_DELAY, 0)
 
 require(dplyr);require(dummies)
 set.seed(0)
