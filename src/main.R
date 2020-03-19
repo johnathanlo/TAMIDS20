@@ -8,6 +8,8 @@ FlightDelays$DAY_OF_WEEK <- as.factor(FlightDelays$DAY_OF_WEEK)
 FlightDelays$ARR_DELAY[is.na(FlightDelays$ARR_DELAY)]<- 0
 FlightDelays$LATE_ARR <- ifelse(FlightDelays$ARR_DELAY>=0, FlightDelays$ARR_DELAY, 0)
 
+#library(GGally)
+#?ggpairs
 require(dplyr);require(dummies); require(fastDummies); require(ggplot2)
 require(pscl); require(MXM)
 
