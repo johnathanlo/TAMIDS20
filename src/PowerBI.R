@@ -1,6 +1,7 @@
 library(ggplot2)
 library(ggmap)
 library(dplyr)
+require(ggrepel)
 
 ##########################################################
 #used https://openflights.org/data.html to append long/lat geo coords to each airport for origin and destination airport code to provided Routes.csv (for ggmap functions)
@@ -58,3 +59,28 @@ qmap("united states", zoom = 4) + geom_path(aes(x = Longitude, y = Latitude), si
 #Map of Routes that Have Average of 60+ Min Arrival Delay 
 delay60plus = read.csv("data/Maps_Delay_Time/60+.csv")
 qmap("united states", zoom = 4) + geom_path(aes(x = Longitude, y = Latitude), size = .1, data = delay60plus, colour="blue", lineend = "round")
+
+#Map of Airports 
+airport_coords = read.csv("data/Airport_Coords.csv")
+names(airport_coords)[1] = "Airport"
+qmplot(Longitude, Latitude, data = airport_coords, colour = I('red'), size = I(1), darken = .3)
+
+#Map of Airports with Usage
+num_flights_origin = group_by(FlightDelays, ORIGIN) %>% summarise(num_origin = n())
+num_flights_dest = group_by(FlightDelays, DEST) %>% summarise(num_dest = n())
+Num_Flights = num_flights_dest$num_dest + num_flights_origin$num_origin
+airport = num_flights_dest$DEST
+num_flights_airport = data.frame(airport, Num_Flights)
+write.csv(num_flights_airport,"C:\\Users\\isaac\\Documents\\GitHub\\TAMIDS20\\data\\num_flights_airport.csv", row.names = FALSE, col.names=TRUE)
+num_flights_airport2 = data.frame(Num_Flights)
+num_flights_airport_coords = append(airport_coords, num_flights_airport2)
+num_flights_airport_coords = as.data.frame(num_flights_airport_coords)
+
+num_flights_under_100000 = filter(num_flights_airport_coords, Num_Flights<100000)
+num_flights_over_100000 = filter(num_flights_airport_coords, Num_Flights>100000)
+
+      ## Map of Airports with Less than 100,000 Flights
+qmplot(Longitude, Latitude, data = num_flights_under_100000, alpha = Num_Flights)+ geom_point() + scale_alpha_continuous(range=c(0.1,1))
+
+      ## Map of Airports with More than 100,000 Flights
+qmplot(Longitude, Latitude, data = num_flights_over_100000, alpha = Num_Flights)+ geom_point() + scale_alpha_continuous(range=c(0.1,1))
