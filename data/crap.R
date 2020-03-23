@@ -81,3 +81,23 @@ hist(abs(MeanDelays_byRoute$avg[MeanDelays_byRoute$avg<50&MeanDelays_byRoute$avg
 shapiro.test(abs(MeanDelays_byRoute$avg[MeanDelays_byRoute$avg<50&MeanDelays_byRoute$avg>0]^(1/3)))
 qqnorm(abs(MeanDelays_byRoute$avg[MeanDelays_byRoute$avg<50&MeanDelays_byRoute$avg>0]^(1/3)))     
 qqline(abs(MeanDelays_byRoute$avg[MeanDelays_byRoute$avg<50&MeanDelays_byRoute$avg>0]^(1/3)))             
+
+hist(FlightDelays05$ARR_DELAY[FlightDelays05$ARR_DELAY<100], breaks = 100)
+
+bernvec <- rbinom(10000,1,.7)
+modelvec <- bernvec*rexp(10000,1/5) + (1-bernvec)*rnorm(10000,-10, 9)
+hist(modelvec, breaks = 100)
+plot(density(modelvec))
+
+weatherfit <- lm(data = FlightDelays05, FlightDelays05$ARR_DELAY~FlightDelays05$WEATHER_DELAY)
+summary(weatherfit)
+
+airplanefit <- lm(data =FlightDelays05, FlightDelays05$ARR_DELAY~FlightDelays05$LATE_AIRCRAFT_DELAY )
+summary(airplanefit)
+
+WeatherPlanefit <- lm(data = FlightDelays05, FlightDelays05$WEATHER_DELAY~FlightDelays05$LATE_AIRCRAFT_DELAY)
+summary(WeatherPlanefit)
+
+cov(FlightDelays05$WEATHER_DELAY, FlightDelays05$LATE_AIRCRAFT_DELAY)
+carrierfit <- lm(data = FlightDelays05, FlightDelays05$ARR_DELAY~FlightDelays05$CARRIER_DELAY)
+summary(carrierfit)

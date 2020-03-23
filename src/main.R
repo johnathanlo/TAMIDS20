@@ -8,13 +8,13 @@ FlightDelays$DAY_OF_WEEK <- as.factor(FlightDelays$DAY_OF_WEEK)
 FlightDelays$ARR_DELAY[is.na(FlightDelays$ARR_DELAY)]<- 0
 FlightDelays$LATE_ARR <- ifelse(FlightDelays$ARR_DELAY>=0, FlightDelays$ARR_DELAY, 0)
 
-<<<<<<< HEAD
+
 AirFares <- read.csv("data/AirFares.csv")
 colnames(AirFares)<-toupper(colnames(AirFares))
-=======
+
 #library(GGally)
 #?ggpairs
->>>>>>> ad5bfed5580305805cba2a150d8e0adcabbf16c6
+
 require(dplyr);require(dummies); require(fastDummies); require(ggplot2)
 require(pscl); require(MXM)
 
@@ -22,7 +22,7 @@ require(pscl); require(MXM)
 set.seed(0)
 FlightDelays05 <- sample_frac(FlightDelays, .05)
 FlightDelays05 <- merge(FlightDelays05, AirFares, by = c("ORIGIN", "DEST"))
-##FlightDelays05 <- dummy_cols(FlightDelays05)
+FlightDelays05 <- dummy_cols(FlightDelays05, select_columns = c())
 rm(list = c("FlightDelays"))###save memory
 ######Sample for EDA######
 
