@@ -101,3 +101,22 @@ summary(WeatherPlanefit)
 cov(FlightDelays05$WEATHER_DELAY, FlightDelays05$LATE_AIRCRAFT_DELAY)
 carrierfit <- lm(data = FlightDelays05, FlightDelays05$ARR_DELAY~FlightDelays05$CARRIER_DELAY)
 summary(carrierfit)
+
+dDelays <- function(x, para){
+  p = para[1]; mu = para[2]; sd = para[3]; rate = para[4];
+  if(x>0){
+    return(p*dexp(x, rate = rate))
+  }else{
+    return((1-p)*dnorm(x, mean = mu , sd = sd))
+  }
+}
+
+loglikDelays <- function(x, para){###para = c(p, mu, sd, rate)
+  p = para[1]; mu = para[2]; sd = para[3]; rate = para[4];
+  likelihoods <-sapply(x,FUN = dDelays, para = para)
+  return(-sum(log(likelihoods)))
+}
+
+loglikDelays(x = FlightDelays05$ARR_DELAY, para = c(.5, -10, 5, 1/24))
+
+MLE <- optim(c(.5, -10, 5, 1/24), loglikDelays, x= FlightDelays05$ARR_DELAY) 
