@@ -11,3 +11,7 @@ FlightDelays$DAY_OF_WEEK <- as.factor(FlightDelays$DAY_OF_WEEK)
 
 summary(FlightDelays)
 str(FlightDelays)
+
+#problematic
+#FlightDelays_complete = FlightDelays[complete.cases(FlightDelays),] #ARR_DELAY and #ARR_DELAY_NEW become the same
+#str(FlightDelays_complete)
