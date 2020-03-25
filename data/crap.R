@@ -82,12 +82,16 @@ shapiro.test(abs(MeanDelays_byRoute$avg[MeanDelays_byRoute$avg<50&MeanDelays_byR
 qqnorm(abs(MeanDelays_byRoute$avg[MeanDelays_byRoute$avg<50&MeanDelays_byRoute$avg>0]^(1/3)))     
 qqline(abs(MeanDelays_byRoute$avg[MeanDelays_byRoute$avg<50&MeanDelays_byRoute$avg>0]^(1/3)))             
 
-hist(FlightDelays05$ARR_DELAY[FlightDelays05$ARR_DELAY<100], breaks = 100)
+hist(FlightDelays05$ARR_DELAY[FlightDelays05$ARR_DELAY<300], breaks = 100)
 
-bernvec <- rbinom(10000,1,.7)
-modelvec <- bernvec*rexp(10000,1/5) + (1-bernvec)*rnorm(10000,-10, 9)
+bernvec <- rbinom(10000,1,.347)
+modelvec <- bernvec*rexp(10000,.02551029) + (1-bernvec)*rnorm(10000,-12.647, 8.781)
 hist(modelvec, breaks = 100)
 plot(density(modelvec))
+
+inflatedvec <- rbinom(10000,1,.5)*rexp(10000,.0255)
+hist(inflatedvec, breaks = 100)
+hist(FlightDelays05$ARR_DELAY_NEW[FlightDelays05$ARR_DELAY_NEW<200], breaks = 100)
 
 weatherfit <- lm(data = FlightDelays05, FlightDelays05$ARR_DELAY~FlightDelays05$WEATHER_DELAY)
 summary(weatherfit)
@@ -120,3 +124,28 @@ loglikDelays <- function(x, para){###para = c(p, mu, sd, rate)
 loglikDelays(x = FlightDelays05$ARR_DELAY, para = c(.5, -10, 5, 1/24))
 
 MLE <- optim(c(.5, -10, 5, 1/24), loglikDelays, x= FlightDelays05$ARR_DELAY) 
+
+MLE <- c(.3434697830, -12.64704148,   8.78079846 ,  0.02551029)
+
+#####inflated exp#####
+dDelays2 <- function(x, para){
+  p = para[1]; rate = para[2];
+  if(x == 0){
+    return((1-p) + p*(1-exp(-rate/2)))
+  }else{
+    return(p*exp(-rate/2))
+  }
+}
+
+loglikDelays2 <- function(x, para){
+  p = para[1]; rate = para[2];
+  likelihoods<- sapply(x, FUN = dDelays2, para = para)
+  return(-sum(log(likelihoods)))
+}
+FlightDelays05noNA <- na.omit(FlightDelays05$ARR_DELAY_NEW)
+MLE2 <- optim(c(.5,1/24), loglikDelays2, x= FlightDelays05noNA)
+
+MLE2vec <- rbinom(2500000,1,.3879)*rexp(2500000,.1833331)
+par(mfrow = c(2,1))
+hist(MLE2vec, breaks = 100)
+hist(FlightDelays05$ARR_DELAY_NEW[FlightDelays05$ARR_DELAY_NEW<200], breaks = 100)
