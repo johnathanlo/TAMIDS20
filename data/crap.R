@@ -217,4 +217,7 @@ for(i in 1:length(meteo_stations)){
 meteo_stations_trimmed2 <- data.frame(AIRPORT = AirportCoords$id, ID = meteo_stations_id, NAME = meteo_stations_name, DIST = meteo_stations_dist)
 save(list = c("meteo_stations_trimmed2"), file = "data/meteo_stations_trimmed2.RData")
 weatherdata2 <- meteo_pull_monitors(monitors = meteo_stations_trimmed2$ID, date_min = "2018-01-01", date_max = "2019-12-31", var = c("PRCP", "TAVG", "TMAX", "TMIN", "SNOW", "WSFG", "WT01", "WT02", "WT03", "WT04", "WT05", "WT06", "WT07", "WT08", "WT09", "WT10", "WT11", "WT12", "WT13", "WT14", "WT15", "WT16", "WT17", "WT18", "WT19", "WT20", "WT21", "WT22"))
+save(list = c("weatherdata2"), file = "data/weatherdata.RData")
 
+names(weatherdata2)[1] = "ID"
+merged_weather <- merge(meteo_stations_trimmed2, weatherdata2, by = "ID", all.x = F, all.y = F)
