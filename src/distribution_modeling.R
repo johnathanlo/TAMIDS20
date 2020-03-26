@@ -1,6 +1,8 @@
 require(caret)
 require(dplyr)
 require(aod)
+require(ElemStatLearn) 
+
 
 ## Logistic Regression for Whether a Flight Will be Delayed
 # https://stats.idre.ucla.edu/r/dae/logit-regression/
@@ -27,8 +29,10 @@ set.seed(Sys.time())
 subset = sample_frac(Flight_Delays, size=0.05)
 log_model = glm(ARR_DELAY_NEW ~ YEAR+QUARTER+MONTH+DAY_OF_WEEK+CARRIER+ORIGIN+DEST+Route+AIR_TIME+DISTANCE, data= subset, family = "binomial")
 
+step_selection = step(log_model, scope=list(upper=~., lower=~1), k=2) 
+
 require(ResourceSelection)
-### Hosmer-Lemeshow goodness of fit test for logistic regression
+### Hosmer-Lemeshow goodness of fit test for logistic regression (large p-value means good fit)
 #print p-value for different group size 
 for (i in 5:15) {
   print(hoslem.test(log_model$y, fitted(log_model), g=i)$p.value)
