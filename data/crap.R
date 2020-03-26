@@ -184,3 +184,37 @@ for(i in 1:length(meteo_stations)){
 }
 meteo_stations_trimmed <- data.frame(AIRPORT = AirportCoords$id, ID = meteo_stations_id, NAME = meteo_stations_name, DIST = meteo_stations_dist)
 save(list = c("meteo_stations_trimmed"), file = "data/meteo_stations_trimmed.RData")
+
+weatherdata <- meteo_pull_monitors(monitors = meteo_stations_trimmed$ID, date_min = "2018-01-01", date_max = "2019-12-31", var = c("PRCP", "TAVG", "TMAX", "TMIN", "SNOW", "WSFG", "WT01", "WT02", "WT03", "WT04", "WT05", "WT06", "WT07", "WT08", "WT09", "WT10", "WT11", "WT12", "WT13", "WT14", "WT15", "WT16", "WT17", "WT18", "WT19", "WT20", "WT21", "WT22"))
+
+
+#######Redo with current weather stations#######
+load("data/stations.RData")
+good_stations <- stations$id
+meteo_stations_id <- c()
+meteo_stations_index <- c()
+for(i in 1:length(meteo_stations)){
+  notfound = 1
+  j = 1
+  while(notfound){
+    if(meteo_stations[[i]]$id[j] %in% good_stations){
+      meteo_stations_id <-c(meteo_stations_id, meteo_stations[[i]]$id[j])
+      meteo_stations_index <- c(meteo_stations_index, j)
+      notfound = 0
+    }else{
+      j = j+1
+    }
+  }
+}
+meteo_stations_name <- c()
+for(i in 1:length(meteo_stations)){
+  meteo_stations_name <- c(meteo_stations_name, meteo_stations[[i]]$name[meteo_stations_index[i]])
+}
+meteo_stations_dist <- c()
+for(i in 1:length(meteo_stations)){
+  meteo_stations_dist <- c(meteo_stations_dist, meteo_stations[[i]]$distance[meteo_stations_index[i]])
+}
+meteo_stations_trimmed2 <- data.frame(AIRPORT = AirportCoords$id, ID = meteo_stations_id, NAME = meteo_stations_name, DIST = meteo_stations_dist)
+save(list = c("meteo_stations_trimmed2"), file = "data/meteo_stations_trimmed2.RData")
+weatherdata2 <- meteo_pull_monitors(monitors = meteo_stations_trimmed2$ID, date_min = "2018-01-01", date_max = "2019-12-31", var = c("PRCP", "TAVG", "TMAX", "TMIN", "SNOW", "WSFG", "WT01", "WT02", "WT03", "WT04", "WT05", "WT06", "WT07", "WT08", "WT09", "WT10", "WT11", "WT12", "WT13", "WT14", "WT15", "WT16", "WT17", "WT18", "WT19", "WT20", "WT21", "WT22"))
+

@@ -22,7 +22,7 @@ require(pscl); require(MXM)
 set.seed(0)
 FlightDelays05 <- sample_frac(FlightDelays, .05)
 FlightDelays05 <- merge(FlightDelays05, AirFares, by = c("ORIGIN", "DEST"))
-FlightDelays05 <- dummy_cols(FlightDelays05, select_columns = c())
+FlightDelays05 <- dummy_cols(FlightDelays05, select_columns = c("QUARTER", "MONTH", "DAY_OF_WEEK"))
 rm(list = c("FlightDelays"))###save memory
 ######Sample for EDA######
 
