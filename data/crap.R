@@ -109,7 +109,7 @@ summary(carrierfit)
 dDelays <- function(x, para){
   p = para[1]; mu = para[2]; sd = para[3]; rate = para[4];
   if(x>0){
-    return(p*dexp(x, rate = rate))
+    return(p*dexp(x, rate = rate) + (1-p)*dnorm(x, mean = mu, sd = sd))
   }else{
     return((1-p)*dnorm(x, mean = mu , sd = sd))
   }
@@ -126,6 +126,13 @@ loglikDelays(x = FlightDelays05$ARR_DELAY, para = c(.5, -10, 5, 1/24))
 MLE <- optim(c(.5, -10, 5, 1/24), loglikDelays, x= FlightDelays05$ARR_DELAY) 
 
 MLE <- c(.3434697830, -12.64704148,   8.78079846 ,  0.02551029)
+MLEnew <- MLE$par
+bernvec <- rbinom(100000,1,.2052)
+modelvec <- bernvec*rexp(100000,.0164) + (1-bernvec)*rnorm(100000,-9.005, 11.444)
+par(mfrow = c(2,1))
+hist(modelvec, breaks = 100)
+hist(FlightDelays05$ARR_DELAY[FlightDelays05$ARR_DELAY<600], breaks = 100)
+plot(density(modelvec))
 
 #####inflated exp#####
 dDelays2 <- function(x, para){
@@ -148,4 +155,11 @@ MLE2 <- optim(c(.5,1/24), loglikDelays2, x= FlightDelays05noNA)
 MLE2vec <- rbinom(2500000,1,.3879)*rexp(2500000,.1833331)
 par(mfrow = c(2,1))
 hist(MLE2vec, breaks = 100)
-hist(FlightDelays05$ARR_DELAY_NEW[FlightDelays05$ARR_DELAY_NEW<200], breaks = 100)
+hist(FlightDelays05noNA[FlightDelays05noNA<80], breaks = 100)
+
+par(mfrow = c(2,1))
+plot(density(MLE2vec))
+plot(density(FlightDelays05noNA[FlightDelays05noNA<80]))
+library(rnoaa)
+token = "ECJpfJUthLGURRFjeWcFPUThEhVqtbiH"
+test <- ncdc()
