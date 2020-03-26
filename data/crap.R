@@ -124,7 +124,7 @@ loglikDelays <- function(x, para){###para = c(p, mu, sd, rate)
 loglikDelays(x = FlightDelays05$ARR_DELAY, para = c(.5, -10, 5, 1/24))
 
 MLE <- optim(c(.5, -10, 5, 1/24), loglikDelays, x= FlightDelays05$ARR_DELAY) 
-
+###get fisher information matrix
 MLE <- c(.3434697830, -12.64704148,   8.78079846 ,  0.02551029)
 MLEnew <- MLE$par
 bernvec <- rbinom(100000,1,.2052)
@@ -162,4 +162,25 @@ plot(density(MLE2vec))
 plot(density(FlightDelays05noNA[FlightDelays05noNA<80]))
 library(rnoaa)
 token = "ECJpfJUthLGURRFjeWcFPUThEhVqtbiH"
+AirportCoords <- read.csv("data/Airport_Coords.csv")
+names(AirportCoords)[1] = "id"
+AirportCoords <- na.omit(AirportCoords)
 test <- ncdc()
+
+#########RNOAA#########
+ncdc_datatypes(token = token)
+meteo_stations <- meteo_nearby_stations(AirportCoords, lat_colname = "Latitude", lon_colname = "Longitude")
+meteo_stations_id <- c()
+for(i in 1:length(meteo_stations)){
+  meteo_stations_id <-c(meteo_stations_id, meteo_stations[[i]]$id[1])
+}
+meteo_stations_name <- c()
+for(i in 1:length(meteo_stations)){
+  meteo_stations_name <- c(meteo_stations_name, meteo_stations[[i]]$name[1])
+}
+meteo_stations_dist <- c()
+for(i in 1:length(meteo_stations)){
+  meteo_stations_dist <- c(meteo_stations_dist, meteo_stations[[i]]$distance[1])
+}
+meteo_stations_trimmed <- data.frame(AIRPORT = AirportCoords$id, ID = meteo_stations_id, NAME = meteo_stations_name, DIST = meteo_stations_dist)
+save(list = c("meteo_stations_trimmed"), file = "data/meteo_stations_trimmed.RData")
