@@ -24,8 +24,15 @@ Flight_Delays$DIVERTED <- as.factor(Flight_Delays$DIVERTED)
 #Flight_Delays$ARR_DELAY_NEW = as.factor(Flight_Delays$ARR_DELAY_NEW)
 
 set.seed(Sys.time())
-subset = sample_frac(Flight_Delays, size=0.01)
-log_model = glm(ARR_DELAY_NEW ~ YEAR+QUARTER+MONTH+CARRIER+ORIGIN+DEST+DISTANCE, data= subset, family = "binomial")
+subset = sample_frac(Flight_Delays, size=0.05)
+log_model = glm(ARR_DELAY_NEW ~ YEAR+QUARTER+MONTH+DAY_OF_WEEK+CARRIER+ORIGIN+DEST+Route+AIR_TIME+DISTANCE, data= subset, family = "binomial")
+
+require(ResourceSelection)
+### Hosmer-Lemeshow goodness of fit test for logistic regression
+#print p-value for different group size 
+for (i in 5:15) {
+  print(hoslem.test(log_model$y, fitted(log_model), g=i)$p.value)
+}
 
 #- FL_DATE - FL_NUM - ORIGIN - DEST - CRS_DEP_TIME - ARR_TIME - DEP_TIME_BLK - ARR_TIME_BLK - EMPTOTAL - EMPFTE - DIVERTED
 
@@ -37,9 +44,6 @@ wald.test(b = coef(log_model), Sigma = vcov(log_model), Terms = 2:4) #test for s
 ## odds ratios and 95% CI
 exp(cbind(OR = coef(log_model), confint(log_model))) #for a one unit increase in dependent variable, the odds of a delay ocurring (versus not occuring) increases by a factor of the coefficeint of that dependent variable (and same interpretation as above for wald.test for categorical variables)
 
-test.frame = data.frame(QUARTER = as.factor(4), MONTH = as.factor(12), CARRIER = as.factor("AA"), PASSENGERS = 7000)
-predict.glm(log_model, newdata = test.frame, type = "response")
-
 #Test or model utiltiy:
 #One measure of model fit is the significance of the overall model. This test asks whether the model with predictors fits significantly better than a model with just an intercept (i.e., a null model). The test statistic is the difference between the residual deviance for the model with predictors and the null model. The test statistic is distributed chi-squared with degrees of freedom equal to the differences in degrees of freedom between the current and the null model (i.e., the number of predictor variables in the model).
 
@@ -47,25 +51,62 @@ with(log_model, null.deviance - deviance) #test-statistics
 with(log_model, df.null - df.residual) #df for chi-square
 with(log_model, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE)) #p-value
 
+### LOOKUP: Hosmer-Lemeshow goodness of fit test for logistic regression
+
 ## correlation matrix (with ARR_DELAY_NEW)
 ## confusion matrix
 
+set.seed(Sys.time())
 test_data = sample_n(Flight_Delays, 1000)
 prediction <- predict(log_model, newdata = test_data, type = "response")
-confusionMatrix(data = as.factor(as.numeric(prediction>0.5)), reference = test_data$ARR_DELAY_NEW)
 
-## cross validation (probably not applicable)
+#### ROC To Determine Threshold
+require(pROC)
+roc_log = roc(test_data$ARR_DELAY_NEW, prediction)
+plot(roc_log, legacy.axes = TRUE, col=2, main="ROC Curve - Logistic Regression")
+threshold = coords(roc_log, "best", "threshold")
+print(paste("Probability Threshold: " ,threshold$threshold))
 
-###############CARET
-set.seed(2020)
-subset = sample_frac(Flight_Delays, size=0.0000001)
-data_idx = createDataPartition(subset, p = 0.75, list=FALSE) ##FIXME
-data_trn = Default[default_idx, ]
-data_tst = Default[-default_idx, ]
+## Confusion Matrix Using Threshold
+confusionMatrix(data = as.factor(as.numeric(prediction>threshold$threshold)), reference = test_data$ARR_DELAY_NEW)
 
 
 #############################################################################################
 #############################################################################################
+
+### LINEAR DISCRIMINANT ANALYSIS
+require(MASS)
+set.seed(Sys.time())
+subset = sample_frac(Flight_Delays, size=0.05)
+fit_lda = lda(ARR_DELAY_NEW ~ YEAR +QUARTER+MONTH+DAY_OF_WEEK+CARRIER+ORIGIN+DEST+Route+AIR_TIME+DISTANCE , data = subset)
+
+set.seed(Sys.time())
+test_data = sample_n(Flight_Delays, 1000)
+prediction <- as.numeric(predict(fit_lda, newdata = test_data, type = "response")$class)
+
+require(pROC)
+roc_log = roc(test_data$ARR_DELAY_NEW, prediction)
+plot(roc_log, legacy.axes = TRUE, col=2, main="ROC Curve - LDA")
+threshold = coords(roc_log, "best", "threshold")
+print(paste("Probability Threshold: " ,threshold$threshold))
+
+confusionMatrix(data = as.factor(as.numeric(prediction>threshold$threshold)), reference = test_data$ARR_DELAY_NEW)
+
+
+#############################################################################################
+#############################################################################################
+
+## KNN
+
+require(class)
+set.seed(Sys.time())
+subset = na.omit(sample_frac(Flight_Delays, size=0.05))
+test_data = na.omit(sample_frac(Flight_Delays, 0.05))
+knn_mod = knn(subset, test_data, cl=subset$ARR_DELAY_NEW,k=5)
+
+#############################################################################################
+#############################################################################################
+
 
 ## Fitting Exponential Distribution
 
@@ -80,6 +121,7 @@ for (i in 1:n) {
   moment_data[i] = moment_est
 }
 lambda_est = mean(moment_data)
+
 
 ############plot against an exponential distribution
 
@@ -104,3 +146,5 @@ lines(nqexp,nqexp,lwd=2,col="blue")
 sorted = as.vector(sort(rexp(nrow(subset), lambda_est), decreasing=T))
 exp_test = data.frame(index = 1:nrow(subset),theoretical = sorted, data = as.vector(sort(subset$ARR_DELAY_NEW, decreasing=T)))
 ggplot(exp_test) + geom_point(aes(x=index, y=theoretical, color='blue')) + geom_point(aes(x=index, y=data, color='red')) 
+
+
