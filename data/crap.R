@@ -221,3 +221,27 @@ save(list = c("weatherdata2"), file = "data/weatherdata.RData")
 
 names(weatherdata2)[1] = "ID"
 merged_weather <- merge(meteo_stations_trimmed2, weatherdata2, by = "ID", all.x = F, all.y = F)
+save(list = c("merged_weather"), file = "data/merged_weather.RData")
+
+merged_weather <- as.data.frame(merged_weather)
+merged_weather$ORIGIN <- merged_weather$AIRPORT
+names(merged_weather)[5] <- "FL_DATE"
+
+FlightDelays0505 <- sample_frac(tbl = FlightDelays05, size = .005)
+FlightDelays0505$FL_DATE <- as.factor(FlightDelays0505$FL_DATE)
+merged_weather$FL_DATE <- as.factor(merged_weather$FL_DATE)
+merged_FlightDelays05 <- merge(FlightDelays0505, merged_weather)
+
+FlightDelays05$FL_DATE <- as.factor(FlightDelays05$FL_DATE)
+merged_weather$FL_DATE <- as.factor(merged_weather$FL_DATE)
+merged_FlightDelays05 <- merge(FlightDelays05, merged_weather)
+
+
+merged_weather.dest <- merged_weather
+for(i in 1:length(names(merged_weather.dest))){
+  names(merged_weather.dest)[i] <- paste(names(merged_weather.dest[i]), ".DEST", sep = "")
+}
+names(merged_weather.dest)[2] = "DEST"
+names(merged_weather.dest)[5] = "FL_DATE"
+
+merged_FlightDelays05 <- merge(merged_FlightDelays05, merged_weather.dest)
