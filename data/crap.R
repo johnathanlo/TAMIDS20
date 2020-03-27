@@ -248,9 +248,18 @@ merged_FlightDelays05 <- merge(merged_FlightDelays05, merged_weather.dest)
 
 FlightDelays05_withWeather <- merged_FlightDelays05
 save(list = c("merged_weather.dest"), file = "data/merged_weather_dest.Rdata")
-save(list = c("FlightDelays05_withWeather"), file = "data/FlightDelays05_withWeather")
+save(list = c("FlightDelays05_withWeather"), file = "data/FlightDelays05_withWeather.RData")
 
 ###regress weather
-weatherfit <- lm(data = FlightDelays05_withWeather, ARR_DELAY~tmax + tmin + tmax.DEST + tmin.DEST)
-summary(weatherfit)
+library(caret)
+weatherfit <- lm(data = FlightDelays05_withWeather, WEATHER_DELAY~tmax + tmin + tmax.DEST + tmin.DEST + prcp + snow )
+weatherfit2 <- glm(ARR_DEL15~ tmax+ tmin + prcp + snow, data = FlightDelays05_withWeather, family = "binomial")
+summary(weatherfit2)
+weatherfit2_predict <- predict(weatherfit2, newdata = FlightDelays05_withWeather)
+confusionMatrix(data = factor(weatherfit2_predict), reference = factor(FlightDelays05$ARR_DEL15))
 plot(weatherfit)
+weatherfit2_predict
+
+save(list = c("FlightDelays"), file = "data/FlightDelays.RData")
+
+FlightDelays_Weather <- merge(FlightDelays, merged_weather)
