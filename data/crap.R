@@ -263,3 +263,12 @@ weatherfit2_predict
 save(list = c("FlightDelays"), file = "data/FlightDelays.RData")
 
 FlightDelays_Weather <- merge(FlightDelays, merged_weather)
+FlightDelays_weatherFull <- merge(FlightDelays_Weather, merged_weather.dest)
+save(list = c("FlightDelays_weatherFull"), file = "data/FlightDelays_weatherFull.RData")
+AirFare <- read.csv("data/AirFares.csv")
+names(AirFare)[2] = "QUARTER"
+names(AirFare)[3] = "ORIGIN"
+names(AirFare)[5] = "DEST"
+names(AirFare)[1] = "YEAR"
+FlightDelays_Full<- merge(FlightDelays_weatherFull, AirFare)
+
