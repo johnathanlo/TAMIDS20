@@ -245,3 +245,12 @@ names(merged_weather.dest)[2] = "DEST"
 names(merged_weather.dest)[5] = "FL_DATE"
 
 merged_FlightDelays05 <- merge(merged_FlightDelays05, merged_weather.dest)
+
+FlightDelays05_withWeather <- merged_FlightDelays05
+save(list = c("merged_weather.dest"), file = "data/merged_weather_dest.Rdata")
+save(list = c("FlightDelays05_withWeather"), file = "data/FlightDelays05_withWeather")
+
+###regress weather
+weatherfit <- lm(data = FlightDelays05_withWeather, ARR_DELAY~tmax + tmin + tmax.DEST + tmin.DEST)
+summary(weatherfit)
+plot(weatherfit)
