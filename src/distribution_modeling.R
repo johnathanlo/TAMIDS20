@@ -176,3 +176,176 @@ lines(nqmix,nqmix,lwd=2,col="blue")
 sorted = as.vector(sort(rexp(nrow(subset), lambda_est), decreasing=T))
 exp_test = data.frame(index = 1:nrow(subset),theoretical = sorted, data = as.vector(sort(subset$ARR_DELAY_NEW, decreasing=T)))
 ggplot(exp_test) + geom_point(aes(x=index, y=theoretical, color='blue')) + geom_point(aes(x=index, y=data, color='red')) 
+
+#######################################################################
+
+#### LOGISTIC REGRESSION WITH WEATHER DATA
+FlightDelays05_withWeather$ARR_DELAY_NEW = ifelse(FlightDelays05_withWeather$ARR_DELAY_NEW > 0, 1, FlightDelays05_withWeather$ARR_DELAY_NEW) 
+FlightDelays05_withWeather$ARR_DELAY_NEW = as.factor(FlightDelays05_withWeather$ARR_DELAY_NEW)
+
+#SET all NA in wt## to 0 so that it can be made a binary dummy
+FlightDelays05_withWeather$wt01[is.na(FlightDelays05_withWeather$wt01)] = 0
+FlightDelays05_withWeather$wt02[is.na(FlightDelays05_withWeather$wt02)] = 0
+FlightDelays05_withWeather$wt03[is.na(FlightDelays05_withWeather$wt03)] = 0
+FlightDelays05_withWeather$wt04[is.na(FlightDelays05_withWeather$wt04)] = 0
+FlightDelays05_withWeather$wt05[is.na(FlightDelays05_withWeather$wt05)] = 0
+FlightDelays05_withWeather$wt06[is.na(FlightDelays05_withWeather$wt06)] = 0
+FlightDelays05_withWeather$wt07[is.na(FlightDelays05_withWeather$wt07)] = 0
+FlightDelays05_withWeather$wt08[is.na(FlightDelays05_withWeather$wt08)] = 0
+FlightDelays05_withWeather$wt09[is.na(FlightDelays05_withWeather$wt09)] = 0
+FlightDelays05_withWeather$wt10[is.na(FlightDelays05_withWeather$wt10)] = 0
+FlightDelays05_withWeather$wt11[is.na(FlightDelays05_withWeather$wt11)] = 0
+
+FlightDelays05_withWeather$wt01.DEST[is.na(FlightDelays05_withWeather$wt01.DEST)] = 0
+FlightDelays05_withWeather$wt02.DEST[is.na(FlightDelays05_withWeather$wt02.DEST)] = 0
+FlightDelays05_withWeather$wt03.DEST[is.na(FlightDelays05_withWeather$wt03.DEST)] = 0
+FlightDelays05_withWeather$wt04.DEST[is.na(FlightDelays05_withWeather$wt04.DEST)] = 0
+FlightDelays05_withWeather$wt05.DEST[is.na(FlightDelays05_withWeather$wt05.DEST)] = 0
+FlightDelays05_withWeather$wt06.DEST[is.na(FlightDelays05_withWeather$wt06.DEST)] = 0
+FlightDelays05_withWeather$wt07.DEST[is.na(FlightDelays05_withWeather$wt07.DEST)] = 0
+FlightDelays05_withWeather$wt08.DEST[is.na(FlightDelays05_withWeather$wt08.DEST)] = 0
+FlightDelays05_withWeather$wt09.DEST[is.na(FlightDelays05_withWeather$wt09.DEST)] = 0
+FlightDelays05_withWeather$wt10.DEST[is.na(FlightDelays05_withWeather$wt10.DEST)] = 0
+FlightDelays05_withWeather$wt11.DEST[is.na(FlightDelays05_withWeather$wt11.DEST)] = 0
+
+## SET all wt## to factors
+FlightDelays05_withWeather$wt01 = as.factor(FlightDelays05_withWeather$wt01)
+FlightDelays05_withWeather$wt02 = as.factor(FlightDelays05_withWeather$wt02)
+FlightDelays05_withWeather$wt03 = as.factor(FlightDelays05_withWeather$wt03)
+FlightDelays05_withWeather$wt04 = as.factor(FlightDelays05_withWeather$wt04)
+FlightDelays05_withWeather$wt06 = as.factor(FlightDelays05_withWeather$wt06)
+FlightDelays05_withWeather$wt08 = as.factor(FlightDelays05_withWeather$wt08)
+FlightDelays05_withWeather$wt09 = as.factor(FlightDelays05_withWeather$wt09)
+FlightDelays05_withWeather$wt05 = as.factor(FlightDelays05_withWeather$wt05)
+FlightDelays05_withWeather$wt07 = as.factor(FlightDelays05_withWeather$wt07)
+FlightDelays05_withWeather$wt10 = as.factor(FlightDelays05_withWeather$wt10)
+FlightDelays05_withWeather$wt11 = as.factor(FlightDelays05_withWeather$wt11)
+
+FlightDelays05_withWeather$wt01.DEST = as.factor(FlightDelays05_withWeather$wt01.DEST)
+FlightDelays05_withWeather$wt02.DEST = as.factor(FlightDelays05_withWeather$wt02.DEST)
+FlightDelays05_withWeather$wt03.DEST = as.factor(FlightDelays05_withWeather$wt03.DEST)
+FlightDelays05_withWeather$wt04.DEST = as.factor(FlightDelays05_withWeather$wt04.DEST)
+FlightDelays05_withWeather$wt06.DEST = as.factor(FlightDelays05_withWeather$wt06.DEST)
+FlightDelays05_withWeather$wt08.DEST = as.factor(FlightDelays05_withWeather$wt08.DEST)
+FlightDelays05_withWeather$wt09.DEST = as.factor(FlightDelays05_withWeather$wt09.DEST)
+FlightDelays05_withWeather$wt05.DEST = as.factor(FlightDelays05_withWeather$wt05.DEST)
+FlightDelays05_withWeather$wt07.DEST = as.factor(FlightDelays05_withWeather$wt07.DEST)
+FlightDelays05_withWeather$wt10.DEST = as.factor(FlightDelays05_withWeather$wt10.DEST)
+FlightDelays05_withWeather$wt11.DEST = as.factor(FlightDelays05_withWeather$wt11.DEST)
+
+FlightDelays05_withWeather$ARR_DEL15 = as.factor(FlightDelays05_withWeather$ARR_DEL15)
+
+quantile(x = FlightDelays05_withWeather$ARR_DELAY, probs = c(.05, .95))
+middle90 = filter(FlightDelays05_withWeather, ARR_DELAY > -26 && ARR_DELAY < 74)
+
+set.seed(Sys.time())
+weather_training = sample_frac(FlightDelays05_withWeather, 0.8)
+weather_logistic = glm(ARR_DEL15 ~ YEAR + QUARTER + MONTH+ DISTANCE +  CRS_DEP_TIME + CRS_ARR_TIME + prcp+snow+tavg+tmax+tmin+wt01+wt02+wt03+wt04+wt05+wt06+wt07+wt08+wt09+wt10+wt01.DEST+wt02.DEST+wt03.DEST+wt04.DEST+wt05.DEST+wt06.DEST+wt07.DEST+wt08.DEST+wt09.DEST+wt10.DEST+wt11.DEST, data= weather_training, family = "binomial") ##wt11 problematic
+
+summary(weather_logistic)
+step_selection = step(weather_logistic, scope=list(upper=~., lower=~1), k=2, direction = "forward") 
+summary(step_selection)
+
+
+require(ResourceSelection)
+### Hosmer-Lemeshow goodness of fit test for logistic regression (large p-value means good fit)
+#print p-value for different group size 
+# small p-value means not a good fit 
+for (i in 5:15) {
+  print(hoslem.test(weather_logistic$y, fitted(weather_logistic), g=i)$p.value)
+}
+
+
+#Test or model utiltiy:
+with(weather_logistic, null.deviance - deviance) #test-statistics
+with(weather_logistic, df.null - df.residual) #df for chi-square
+with(weather_logistic, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE)) #p-value
+
+set.seed(Sys.time())
+weather_testing = sample_frac(FlightDelays05_withWeather, 0.2)
+prediction_weather <- predict(weather_logistic, newdata = weather_testing, type = "response")
+
+#### ROC To Determine Threshold
+require(pROC)
+roc_log_weather = roc(weather_testing$ARR_DEL15, prediction_weather)
+plot(roc_log_weather, legacy.axes = TRUE, col=2, main="ROC Curve - Logistic Regression (Weather)")
+threshold_weather = coords(roc_log_weather, "best", "threshold")
+print(paste("Probability Threshold: " ,threshold_weather$threshold))
+
+## Confusion Matrix Using Threshold
+confusionMatrix(data = as.factor(as.numeric(prediction_weather>threshold_weather$threshold)), reference = weather_testing$ARR_DEL15)
+
+
+############################################
+### FULL MODEL (weather & airfare)
+
+FlightDelays_Full$wt01[is.na(FlightDelays_Full$wt01)] = 0
+FlightDelays_Full$wt02[is.na(FlightDelays_Full$wt02)] = 0
+FlightDelays_Full$wt03[is.na(FlightDelays_Full$wt03)] = 0
+FlightDelays_Full$wt04[is.na(FlightDelays_Full$wt04)] = 0
+FlightDelays_Full$wt05[is.na(FlightDelays_Full$wt05)] = 0
+FlightDelays_Full$wt06[is.na(FlightDelays_Full$wt06)] = 0
+FlightDelays_Full$wt07[is.na(FlightDelays_Full$wt07)] = 0
+FlightDelays_Full$wt08[is.na(FlightDelays_Full$wt08)] = 0
+FlightDelays_Full$wt09[is.na(FlightDelays_Full$wt09)] = 0
+FlightDelays_Full$wt10[is.na(FlightDelays_Full$wt10)] = 0
+FlightDelays_Full$wt11[is.na(FlightDelays_Full$wt11)] = 0
+
+FlightDelays_Full$wt01.DEST[is.na(FlightDelays_Full$wt01.DEST)] = 0
+FlightDelays_Full$wt02.DEST[is.na(FlightDelays_Full$wt02.DEST)] = 0
+FlightDelays_Full$wt03.DEST[is.na(FlightDelays_Full$wt03.DEST)] = 0
+FlightDelays_Full$wt04.DEST[is.na(FlightDelays_Full$wt04.DEST)] = 0
+FlightDelays_Full$wt05.DEST[is.na(FlightDelays_Full$wt05.DEST)] = 0
+FlightDelays_Full$wt06.DEST[is.na(FlightDelays_Full$wt06.DEST)] = 0
+FlightDelays_Full$wt07.DEST[is.na(FlightDelays_Full$wt07.DEST)] = 0
+FlightDelays_Full$wt08.DEST[is.na(FlightDelays_Full$wt08.DEST)] = 0
+FlightDelays_Full$wt09.DEST[is.na(FlightDelays_Full$wt09.DEST)] = 0
+FlightDelays_Full$wt10.DEST[is.na(FlightDelays_Full$wt10.DEST)] = 0
+FlightDelays_Full$wt11.DEST[is.na(FlightDelays_Full$wt11.DEST)] = 0
+
+## SET all wt## to factors
+FlightDelays_Full$wt01 = as.factor(FlightDelays_Full$wt01)
+FlightDelays_Full$wt02 = as.factor(FlightDelays_Full$wt02)
+FlightDelays_Full$wt03 = as.factor(FlightDelays_Full$wt03)
+FlightDelays_Full$wt04 = as.factor(FlightDelays_Full$wt04)
+FlightDelays_Full$wt06 = as.factor(FlightDelays_Full$wt06)
+FlightDelays_Full$wt08 = as.factor(FlightDelays_Full$wt08)
+FlightDelays_Full$wt09 = as.factor(FlightDelays_Full$wt09)
+FlightDelays_Full$wt05 = as.factor(FlightDelays_Full$wt05)
+FlightDelays_Full$wt07 = as.factor(FlightDelays_Full$wt07)
+FlightDelays_Full$wt10 = as.factor(FlightDelays_Full$wt10)
+FlightDelays_Full$wt11 = as.factor(FlightDelays_Full$wt11)
+
+FlightDelays_Full$wt01.DEST = as.factor(FlightDelays_Full$wt01.DEST)
+FlightDelays_Full$wt02.DEST = as.factor(FlightDelays_Full$wt02.DEST)
+FlightDelays_Full$wt03.DEST = as.factor(FlightDelays_Full$wt03.DEST)
+FlightDelays_Full$wt04.DEST = as.factor(FlightDelays_Full$wt04.DEST)
+FlightDelays_Full$wt06.DEST = as.factor(FlightDelays_Full$wt06.DEST)
+FlightDelays_Full$wt08.DEST = as.factor(FlightDelays_Full$wt08.DEST)
+FlightDelays_Full$wt09.DEST = as.factor(FlightDelays_Full$wt09.DEST)
+FlightDelays_Full$wt05.DEST = as.factor(FlightDelays_Full$wt05.DEST)
+FlightDelays_Full$wt07.DEST = as.factor(FlightDelays_Full$wt07.DEST)
+FlightDelays_Full$wt10.DEST = as.factor(FlightDelays_Full$wt10.DEST)
+FlightDelays_Full$wt11.DEST = as.factor(FlightDelays_Full$wt11.DEST)
+
+FlightDelays_Full$ARR_DEL15 = as.factor(FlightDelays_Full$ARR_DEL15)
+
+set.seed(Sys.time())
+weather_training_full = sample_frac(FlightDelays_Full, 0.05)
+weather_logistic_full = glm(ARR_DEL15 ~ YEAR + QUARTER + MONTH+ DISTANCE +  CRS_DEP_TIME + CRS_ARR_TIME + nsmiles + fare + carrier_lg+large_ms+fare_lg+carrier_low +lf_ms+ prcp+snow+tavg+tmax+tmin+wt01+wt02+wt03+wt04+wt05+wt06+wt07+wt08+wt09+wt10+wt01.DEST+wt02.DEST+wt03.DEST+wt04.DEST+wt05.DEST+wt06.DEST+wt07.DEST+wt08.DEST+wt09.DEST+wt10.DEST+wt11.DEST, data= weather_training_full, family = "binomial") ##wt11 problematic
+
+summary(weather_logistic_full)
+
+set.seed(Sys.time())
+weather_testing_full = sample_frac(FlightDelays_Full, 0.05)
+prediction_weather_full <- predict(weather_logistic_full, newdata = weather_testing_full, type = "response")
+
+#### ROC To Determine Threshold
+require(pROC)
+roc_log_weather_full = roc(weather_testing_full$ARR_DEL15, prediction_weather_full)
+plot(roc_log_weather_full, legacy.axes = TRUE, col=2, main="ROC Curve - Logistic Regression (Weather & Airfare)")
+threshold_weather_full = coords(roc_log_weather_full, "best", "threshold")
+print(paste("Probability Threshold: " ,threshold_weather_full$threshold))
+
+## Confusion Matrix Using Threshold
+confusionMatrix(data = as.factor(as.numeric(prediction_weather_full>threshold_weather_full$threshold)), reference = weather_testing_full$ARR_DEL15)

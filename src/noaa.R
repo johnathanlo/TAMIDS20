@@ -1,3 +1,6 @@
+## write merged_weather.dest to csv to use in Power BI
+write.csv(merged_weather.dest,"C:\\Users\\isaac\\Documents\\GitHub\\TAMIDS20\\data\\meteo_weather.csv", row.names = FALSE, col.names=TRUE)
+
 mateo_nearby_stations()
 
 monitors <- "ASN00003003"
