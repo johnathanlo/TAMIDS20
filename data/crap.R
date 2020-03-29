@@ -252,8 +252,9 @@ save(list = c("FlightDelays05_withWeather"), file = "data/FlightDelays05_withWea
 
 ###regress weather
 library(caret)
-weatherfit <- lm(data = FlightDelays05_withWeather, WEATHER_DELAY~tmax + tmin + tmax.DEST + tmin.DEST + prcp + snow )
+weatherfit <- lm(data = FlightDelays05_withWeather, WEATHER_DELAY~tmax + tmin + tmax.DEST + tmin.DEST + prcp + snow + prcp.DEST + snow.DEST + I(tmax^3) + I(tmin^3) + I(log(prcp)) + I(log(snow)))
 weatherfit2 <- glm(ARR_DEL15~ tmax+ tmin + prcp + snow, data = FlightDelays05_withWeather, family = "binomial")
+summary(weatherfit)
 summary(weatherfit2)
 weatherfit2_predict <- predict(weatherfit2, newdata = FlightDelays05_withWeather)
 confusionMatrix(data = factor(weatherfit2_predict), reference = factor(FlightDelays05$ARR_DEL15))
@@ -271,4 +272,35 @@ names(AirFare)[3] = "ORIGIN"
 names(AirFare)[5] = "DEST"
 names(AirFare)[1] = "YEAR"
 FlightDelays_Full<- merge(FlightDelays_weatherFull, AirFare)
+
+save(list = c("FlightDelays_Full"), file = "data/FlightDelays_Full.RData")
+
+####################RF
+library(caret)
+# library(mice)
+# install.packages("VIM")
+# library(VIM)
+# mice_plot <- aggr(FlightDelays05_withWeather, col=c('navyblue','yellow'),
+#                     numbers=TRUE, sortVars=TRUE,
+#                     labels=names(iris.mis), cex.axis=.7,
+#                     gap=3, ylab=c("Missing data","Pattern"))
+# FlightDelays_mice <- mice(data = Flight_trimmed, method = "pmm", seed = 0)
+FlightDelays05_withWeather[is.na(FlightDelays05_withWeather)]<- 0
+FlightDelays0505 <- sample_frac(FlightDelays05_withWeather, size = .01)
+sim_rf_mod = train(
+  ARR_DEL15 ~ .,
+  data = FlightDelays0505,
+  method = "rf",
+  trControl = trainControl(method = "cv",number=5),
+  #  preProcess = c("center", "scale"),
+  tuneLength = 5,
+  na.action = na.omit,
+)
+print(sim_rf_mod)
+calc_rmse(actual = sim_tst$y,
+          predicted = predict(sim_rf_mod, sim_tst))
+
+library(dplyr)
+FlightDelaysFull_LateDeparturesbyAirport <- group_by(FlightDelays_Full, ORIGIN)
+FlightDelaysFull_LateDeparturesbyAirport_summary <- summarise(FlightDelaysFull_LateDeparturesbyAirport, mean = mean(DEP_DELAY_NEW))
 
