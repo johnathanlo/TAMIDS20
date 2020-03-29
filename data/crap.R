@@ -302,5 +302,9 @@ calc_rmse(actual = sim_tst$y,
 
 library(dplyr)
 FlightDelaysFull_LateDeparturesbyAirport <- group_by(FlightDelays_Full, ORIGIN)
-FlightDelaysFull_LateDeparturesbyAirport_summary <- summarise(FlightDelaysFull_LateDeparturesbyAirport, mean = mean(DEP_DELAY_NEW))
+FlightDelaysFull_LateDeparturesbyAirport_summary <- summarise(FlightDelaysFull_LateDeparturesbyAirport, mean = mean(DEP_DELAY_NEW, na.rm = T))
+save(list = c("FlightDelaysFull_LateDeparturesbyAirport_summary"), file = "data/FlightDelaysFull_LateDeparturesbyAirport_summary.RData")
+AirportCoords <- read.csv("data/Airport_Coords.csv")
+names(AirportCoords)[1] = "ORIGIN"
 
+FlightDelaysFull_LateDeparturesbyAirport_summary <- merge(AirportCoords, FlightDelaysFull_LateDeparturesbyAirport_summary)
