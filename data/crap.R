@@ -271,7 +271,7 @@ names(AirFare)[2] = "QUARTER"
 names(AirFare)[3] = "ORIGIN"
 names(AirFare)[5] = "DEST"
 names(AirFare)[1] = "YEAR"
-FlightDelays_Full<- merge(FlightDelays_weatherFull, AirFare)
+FlightDelays_Full<- merge(FlightDelays_weatherFull, AirFare, all.x=T)
 
 save(list = c("FlightDelays_Full"), file = "data/FlightDelays_Full.RData")
 
