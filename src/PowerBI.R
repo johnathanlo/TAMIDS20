@@ -84,3 +84,14 @@ qmplot(Longitude, Latitude, data = num_flights_under_100000, alpha = Num_Flights
 
       ## Map of Airports with More than 100,000 Flights
 qmplot(Longitude, Latitude, data = num_flights_over_100000, alpha = Num_Flights)+ geom_point() + scale_alpha_continuous(range=c(0.1,1))
+
+## Plot of Departure/Arrival Destination Mean Delay
+avg_arr_delay_airport = group_by(FlightDelays, DEST) %>% summarise(mean = mean(ARR_DELAY_NEW, na.rm=TRUE))
+avg_dep_delay_airport = group_by(FlightDelays, ORIGIN) %>% summarise(mean = mean(DEP_DELAY_NEW, na.rm=TRUE))
+write.csv(avg_arr_delay_airport,"C:\\Users\\isaac\\Documents\\GitHub\\TAMIDS20\\data\\by_airport_arr_delay.csv", row.names = FALSE, col.names=TRUE)
+write.csv(avg_dep_delay_airport,"C:\\Users\\isaac\\Documents\\GitHub\\TAMIDS20\\data\\by_airport_dep_delay.csv", row.names = FALSE, col.names=TRUE)
+
+avg_delay_by_airport_coords = read.csv("data/Airport_Coords_Avg_Delays.csv")
+qmplot(Longitude, Latitude, data = avg_delay_by_airport_coords, alpha = Avg.Origin.Delay)+ geom_point() + scale_alpha_continuous(range=c(0.1,1))
+
+qmplot(Longitude, Latitude, data = avg_delay_by_airport_coords, alpha = Avg.Dest.Delay)+ geom_point() + scale_alpha_continuous(range=c(0.1,1))                                                                  
