@@ -9,7 +9,8 @@ require(ggrepel)
 routes = read.csv("data/Routes_Coords.csv")
 names(routes)[1]="Index"
 
-key = ""
+key = "
+"
 register_google(key)
 
 ## Map of All Possible Flight Routes
