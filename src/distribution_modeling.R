@@ -349,3 +349,26 @@ print(paste("Probability Threshold: " ,threshold_weather_full$threshold))
 
 ## Confusion Matrix Using Threshold
 confusionMatrix(data = as.factor(as.numeric(prediction_weather_full>threshold_weather_full$threshold)), reference = weather_testing_full$ARR_DEL15)
+
+## KNN
+knn_data = select(FlightDelays_Full, ARR_DELAY, prcp:lf_ms)
+knn_sample = sample_n(rf_data, 1000)
+set.seed(Sys.time())
+data_idx = createDataPartition(knn_sample$ARR_DELAY, p = 0.75, list = FALSE)
+data_trn = knn_sample[data_idx, ]
+data_tst = knn_sample[-data_idx, ]
+knn_mod = train(
+  ARR_DELAY ~ .,
+  data = data_trn,
+  method = "knn",
+  trControl = trainControl(method = "cv", number = 10),
+  preProcess = c("impute", "center", "scale"),
+  na.fail = na.pass,
+  tuneGrid = expand.grid(k = seq(1, 101, by = 2))
+)
+
+
+arr_delay = as.data.frame(group_by(FlightDelays_Full, DEST, QUARTER) %>% mutate(avg_arr_delay = mean(ARR_DELAY)))
+arr_delay_subset = sample_n(arr_delay, 10000)
+fit = lm(ARR_DELAY ~ avg_arr_delay + DISTANCE, data = arr_delay)
+summary(fit)

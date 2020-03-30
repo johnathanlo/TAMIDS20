@@ -95,4 +95,116 @@ write.csv(avg_dep_delay_airport,"C:\\Users\\isaac\\Documents\\GitHub\\TAMIDS20\\
 avg_delay_by_airport_coords = read.csv("data/Airport_Coords_Avg_Delays.csv")
 qmplot(Longitude, Latitude, data = avg_delay_by_airport_coords, alpha = Avg.Origin.Delay)+ geom_point() + scale_alpha_continuous(range=c(0.1,1))
 
-qmplot(Longitude, Latitude, data = avg_delay_by_airport_coords, alpha = Avg.Dest.Delay)+ geom_point() + scale_alpha_continuous(range=c(0.1,1))                                                                  
+qmplot(Longitude, Latitude, data = avg_delay_by_airport_coords, alpha = Avg.Dest.Delay)+ geom_point() + scale_alpha_continuous(range=c(0.1,1))   
+
+##Combined Plot of Delays with Airport Popularity
+popular_airport_delays = read.csv("data/Airport_Coords_Avg_Delays.csv")
+popular_airport_delays = filter(popular_airport_delays, Num_Flights>100000)
+##Delay and Popularity (Destination)
+qmplot(Longitude, Latitude, data = popular_airport_delays)+ geom_point(aes( alpha=Avg.Dest.Delay,size = Num_Flights)) + scale_alpha_continuous(range=c(0.1,1)) 
+
+##Delay and Popularity (Origin)
+qmplot(Longitude, Latitude, data = popular_airport_delays)+ geom_point(aes( alpha=Avg.Origin.Delay,size = Num_Flights)) + scale_alpha_continuous(range=c(0.1,1)) 
+
+
+## When Flights Are Scheduled for Days of the Week
+plot(FlightDelays$DAY_OF_WEEK ~ FlightDelays$DEP_TIME_BLK)
+
+## how far destination cities are from a given originating airport. This is of importance as longer the flight, airlines can make up time in the air.
+plot(FlightDelays$DISTANCE ~ FlightDelays$ORIGIN)
+
+## When are delays most evident for days of week
+plot(FlightDelays$ARR_DEL15 ~ FlightDelays$DAY_OF_WEEK)
+
+## Histogram of Delays by Carrier
+
+delays_by_airport = group_by(FlightDelays_Full, CARRIER, DEST) %>% summarise(avg_arr_delay = mean(ARR_DELAY_NEW, na.rm=TRUE))
+
+hist(filter(delays_by_airport, CARRIER == "AA")$avg_arr_delay, breaks=25, main="AA", xlab="average arrival delay at each airport dest")
+
+par(mfrow=c(1,4))
+AA = filter(FlightDelays_Full, CARRIER == "AA")
+UA = filter(FlightDelays_Full, CARRIER == "UA")
+AS = filter(FlightDelays_Full, CARRIER == "AS")
+
+JFK = filter(FlightDelays_Full, ORIGIN == "JFK")
+LAX = filter(FlightDelays_Full, ORIGIN == "LAX")
+AUS = filter(FlightDelays_Full, ORIGIN == "AUS")
+
+Q1 = filter(FlightDelays_Full, QUARTER == "1")
+Q2 = filter(FlightDelays_Full, QUARTER == "2")
+Q3 = filter(FlightDelays_Full, QUARTER == "3")
+Q4 = filter(FlightDelays_Full, QUARTER == "4")
+
+Route148 = filter(FlightDelays_Full, Route == 148)
+Route900 = filter(FlightDelays_Full, Route == 900)
+Route2500 = filter(FlightDelays_Full, Route == 2500)
+Route5000 = filter(FlightDelays_Full, Route == 5000)
+
+wt01one = filter(FlightDelays_Full, wt01 == 1)
+FlightDelays_Full$wt01[is.na(FlightDelays_Full$wt01)] = 0
+wt01zero = filter(FlightDelays_Full, wt01==0)
+
+prcp_little = filter(FlightDelays_Full, prcp < 1000)
+prcp_big = filter(FlightDelays_Full, prcp >= 1000)
+
+snow_little = filter(FlightDelays_Full, snow < 100)
+snow_big = filter(FlightDelays_Full, snow >= 100)
+
+#AA ARR_DELAY HIST
+hist(AA$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+
+##United ARR_DELAY HIST
+hist(UA$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+
+## Alaska Airlines ARR_DELAY HIST
+hist(AS$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+
+par(mfrow=c(1,3))
+# JFK
+hist(JFK$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+# LAX
+hist(LAX$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+# AUStin
+hist(AUS$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+
+par(mfrow=c(1,4))
+# Q1
+hist(Q1$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+# Q2
+hist(Q2$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+# Q3
+hist(Q3$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+# Q4
+hist(Q4$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+
+par(mfrow=c(1,4))
+# Route148
+hist(Route148$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+# Route900
+hist(Route900$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+# Route2500
+hist(Route2500$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+# Route5000
+hist(Route5000$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+
+par(mfrow=c(1,2))
+# wt01one
+hist(wt01one$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+#wt01zero
+hist(wt01zero$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+
+par(mfrow=c(1,2))
+#prcp less than 10 centimeters
+hist(prcp_little$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+#prcp more than 10 centimeters
+hist(prcp_big$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+
+par(mfrow=c(1,2))
+#snow less than 
+hist(snow_little$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+#prcp more than 10 centimeters
+hist(snow_big$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+
+snow_big_nozero = filter(snow_big, CANCELED !=1)
+hist(snow_big_nozero$ARR_DELAY, breaks=1000, xlim =c(-200,400))
