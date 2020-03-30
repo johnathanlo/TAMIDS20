@@ -120,9 +120,8 @@ plot(FlightDelays$ARR_DEL15 ~ FlightDelays$DAY_OF_WEEK)
 
 delays_by_airport = group_by(FlightDelays_Full, CARRIER, DEST) %>% summarise(avg_arr_delay = mean(ARR_DELAY_NEW, na.rm=TRUE))
 
-hist(filter(delays_by_airport, CARRIER == "AA")$avg_arr_delay, breaks=25, main="AA", xlab="average arrival delay at each airport dest")
 
-par(mfrow=c(1,4))
+
 AA = filter(FlightDelays_Full, CARRIER == "AA")
 UA = filter(FlightDelays_Full, CARRIER == "UA")
 AS = filter(FlightDelays_Full, CARRIER == "AS")
@@ -151,60 +150,60 @@ prcp_big = filter(FlightDelays_Full, prcp >= 1000)
 snow_little = filter(FlightDelays_Full, snow < 100)
 snow_big = filter(FlightDelays_Full, snow >= 100)
 
+par(mfrow=c(1,3))
 #AA ARR_DELAY HIST
-hist(AA$ARR_DELAY, breaks=1000, xlim =c(-200,200))
-
+hist(AA$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Carrier: AA")
 ##United ARR_DELAY HIST
-hist(UA$ARR_DELAY, breaks=1000, xlim =c(-200,200))
-
+hist(UA$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Carrier: UA")
 ## Alaska Airlines ARR_DELAY HIST
-hist(AS$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(AS$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Carrier: AS")
+
 
 par(mfrow=c(1,3))
 # JFK
-hist(JFK$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(JFK$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Airport: JFK (New York)")
 # LAX
-hist(LAX$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(LAX$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Airport: LAX (California)")
 # AUStin
-hist(AUS$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(AUS$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Airport: AUS (Texas)")
 
 par(mfrow=c(1,4))
 # Q1
-hist(Q1$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(Q1$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Quarter 1")
 # Q2
-hist(Q2$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(Q2$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Quarter 2")
 # Q3
-hist(Q3$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(Q3$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Quarter 3")
 # Q4
-hist(Q4$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(Q4$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Quarter 4")
 
 par(mfrow=c(1,4))
 # Route148
-hist(Route148$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(Route148$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Route: 148")
 # Route900
-hist(Route900$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(Route900$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Route: 900")
 # Route2500
-hist(Route2500$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(Route2500$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Route: 2500")
 # Route5000
-hist(Route5000$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(Route5000$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Route: 5000")
 
 par(mfrow=c(1,2))
 # wt01one
-hist(wt01one$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(wt01one$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Fog: Yes, Present", xlab = "fog$ARR_DELAY")
 #wt01zero
-hist(wt01zero$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(wt01zero$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Fog: No, Absent", xlab = "nofog$ARR_DELAY")
 
 par(mfrow=c(1,2))
 #prcp less than 10 centimeters
-hist(prcp_little$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(prcp_little$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Precipitation: <10 cm", xlab = "prcp_little$ARR_DELAY")
 #prcp more than 10 centimeters
-hist(prcp_big$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(prcp_big$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Precipitation: >10 cm", xlab = "prcp_alot$ARR_DELAY")
 
 par(mfrow=c(1,2))
 #snow less than 
-hist(snow_little$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(snow_little$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Snow: <100 mm", xlab = "snow_less$ARR_DELAY")
 #prcp more than 10 centimeters
-hist(snow_big$ARR_DELAY, breaks=1000, xlim =c(-200,200))
+hist(snow_big$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Snow: >100 mm", xlab = "snow_more$ARR_DELAY")
 
 snow_big_nozero = filter(snow_big, CANCELED !=1)
 hist(snow_big_nozero$ARR_DELAY, breaks=1000, xlim =c(-200,400))
