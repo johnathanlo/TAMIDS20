@@ -122,10 +122,10 @@ loglikDelays <- function(x, para){###para = c(p, mu, sd, rate)
 }
 
 loglikDelays(x = FlightDelays05$ARR_DELAY, para = c(.5, -10, 5, 1/24))
-
+MLE148 <- optim(c(.5, -10, 5, 1/24), loglikDelays, x= as.numeric(Route148)) 
 MLE <- optim(c(.5, -10, 5, 1/24), loglikDelays, x= FlightDelays05$ARR_DELAY) 
 ###get fisher information matrix
-MLE <- c(.3434697830, -12.64704148,   8.78079846 ,  0.02551029)
+
 MLEnew <- MLE$par
 bernvec <- rbinom(100000,1,.2052)
 modelvec <- bernvec*rexp(100000,.0164) + (1-bernvec)*rnorm(100000,-9.005, 11.444)
@@ -302,9 +302,96 @@ calc_rmse(actual = sim_tst$y,
 
 library(dplyr)
 FlightDelaysFull_LateDeparturesbyAirport <- group_by(FlightDelays_Full, ORIGIN)
-FlightDelaysFull_LateDeparturesbyAirport_summary <- summarise(FlightDelaysFull_LateDeparturesbyAirport, mean = mean(DEP_DELAY_NEW, na.rm = T))
+FlightDelaysFull_LateDeparturesbyAirport_summary <- summarise(FlightDelaysFull_LateDeparturesbyAirport, mean = mean(DEP_DELAY_NEW, na.rm = T), var = var(DEP_DELAY_NEW, na.rm = T), median = median(DEP_DELAY_NEW, na.rm=T))
+FlightDelaysFull_lowTempbyAirport <- group_by(FlightDelays_Full, ORIGIN, QUARTER)
+FlightDelaysFull_lowTempbyAirport_summary <- summarise(FlightDelaysFull_lowTempbyAirport, meantemp = median(tmin, na.rm = T))
+
 save(list = c("FlightDelaysFull_LateDeparturesbyAirport_summary"), file = "data/FlightDelaysFull_LateDeparturesbyAirport_summary.RData")
 AirportCoords <- read.csv("data/Airport_Coords.csv")
 names(AirportCoords)[1] = "ORIGIN"
 
 FlightDelaysFull_LateDeparturesbyAirport_summary <- merge(AirportCoords, FlightDelaysFull_LateDeparturesbyAirport_summary)
+
+numflights <- read.csv("data/num_flights_airport.csv")
+names(numflights)[1] = "ORIGIN"
+numflights_by_lateDepartures <- merge(numflights, AirportCoords)
+numflights_by_lateDepartures <- merge(numflights_by_lateDepartures, FlightDelaysFull_LateDeparturesbyAirport_summary)
+
+
+
+plot(numflights_by_lateDepartures$Num_Flights[numflights_by_lateDepartures$Num_Flights>100000], numflights_by_lateDepartures$mean[numflights_by_lateDepartures$Num_Flights>100000])
+numflights_fit <- lm(data = numflights_by_lateDepartures[numflights_by_lateDepartures$Num_Flights>100000,], mean~sqrt(Num_Flights) + Latitude + Longitude)
+summary(numflights_fit)
+plot(numflights_fit)
+
+#######################3
+FlightDelaysFull_LateDeparturesbyAirport <- group_by(FlightDelays_Full, ORIGIN)
+FlightDelaysFull_LateDeparturesbyAirport_summary <- summarise(FlightDelaysFull_LateDeparturesbyAirport, mean = mean(DEP_DELAY_NEW, na.rm = T), var = var(DEP_DELAY_NEW, na.rm = T), median = median(DEP_DELAY_NEW, na.rm=T))
+FlightDelaysFull_lowTempbyAirport <- group_by(FlightDelays_Full, ORIGIN, QUARTER)
+FlightDelaysFull_lowTempbyAirport_summary <- summarise(FlightDelaysFull_lowTempbyAirport, med_tmin = median(tmin, na.rm = T), mean_DEP_DELAY = mean(DEP_DELAY, na.rm = T), mean_NET_INCOME = mean(NET_INCOME, na.rm = T), mean_DISTANCE =  mean(DISTANCE, na.rm = T))
+FlightDelaysFull_lowTempbyAirport_summary <- merge(FlightDelaysFull_lowTempbyAirport_summary, numflights_by_lateDepartures)
+save(list = c("FlightDelaysFull_lowTempbyAirport_summary"), file = "data/FlightDelaysFull_lowTempbyAirport_summary.RData")
+FlightDelays_byAirport_regress <- FlightDelaysFull_lowTempbyAirport_summary[,-1]
+FlightDelays_byAirport_regress$var <- NULL
+FlightDelays_byAirport_regress$mean <- NULL
+
+quantile(FlightDelays_byAirport_regress$mean_DEP_DELAY, probs=c(.05,.95), na.rm = T)
+FlightDelays_byAirport_regress_90 <- FlightDelays_byAirport_regress[FlightDelays_byAirport_regress$mean_DEP_DELAY>-2.56 && FlightDelays_byAirport_regress$mean_DEP_DELAY<21.54,]
+FlightDelays_byAirport_regress_90 <- FlightDelays_byAirport_regress_90[-1370,]
+FlightDelays_byAirport_regress_90$med_DEP_DELAY <- NULL
+library(psych)
+pairs.panels(FlightDelays_byAirport_regress_90)
+
+numflights_fit <- lm(data = FlightDelays_byAirport_regress_90[FlightDelays_byAirport_regress_90$Num_Flights<10000,], mean_DEP_DELAY~. )
+summary(numflights_fit)
+plot(numflights_fit)
+###############################
+FlightDelays_Full_byAirline <- group_by(FlightDelays_Full, CARRIER, QUARTER, YEAR)
+FlightDelays_Full_byAirline_ARR_DELAY <- summarise(FlightDelays_Full_byAirline, mean = mean(ARR_DELAY, na.rm = T))
+library(psych)
+pairs.panels(FlightDelays_Full_byAirline_ARR_DELAY)
+
+FlightDelays_sumDelays <- summarise(FlightDelays_Full_byAirline, FLIGHT_COUNT = n(), DELAY_SUM = sum(ARR_DELAY, na.rm = T))
+FlightDelays_sumDelays$AVG_DELAY <- FlightDelays_sumDelays$DELAY_SUM/FlightDelays_sumDelays$FLIGHT_COUNT
+plot_sumDelays <- ggplot(data = FlightDelays_sumDelays[FlightDelays_sumDelays$QUARTER==1 && FlightDelays_sumDelays$YEAR==2018,], aes(x = CARRIER, y = AVG_DELAY))+ geom_point(stat = "identity")
+ANOVA1 <-aov(data = FlightDelays_sumDelays, AVG_DELAY~CARRIER)
+ANOVA2 <- aov(data = FlightDelays_Full, ARR_DELAY~CARRIER)
+summary(ANOVA1)
+summary(ANOVA2)
+plot(TukeyHSD(ANOVA1))
+plot(TukeyHSD(ANOVA2))
+FlightDelays_Full_byAirlineandOrigin <- group_by(FlightDelays_Full, CARRIER, ORIGIN)
+FlightDelays_Full_byAirlineandOrigin <- summarise(FlightDelays_Full_byAirlineandOrigin, mean_ARR_DELAY = mean(ARR_DELAY))
+hist(FlightDelays_Full_byAirlineandOrigin[FlightDelays_Full_byAirlineandOrigin$CARRIER == "UA",]$mean_ARR_DELAY, breaks = 50)
+
+Route148 <- filter(FlightDelays_Full, Route == 148)
+MLE148 <- optim(c(.5, -10, 5, 1/24), loglikDelays, x= Route148$ARR_DELAY) 
+bernvec <- rbinom(1436,1,.189)
+modelvec <- bernvec*rexp(1436,.02009) + (1-bernvec)*rnorm(1436,-10.53, 8.409)
+par(mfrow = c(2,1))
+hist(modelvec, breaks = 100, xlim = c(-200,200))
+hist(Route148$ARR_DELAY, breaks = 100, xlim = c(-200,200))
+plot(density(modelvec))
+
+MLE_BDEDIST <- function(x){
+  return(optim(c(.5, -10, 5, 1/24), loglikDelays, x=x)) 
+}
+
+PLOT_BDE <- function(par, n, data){
+  bernvec <- rbinom(n,1,par[1])
+  modelvec <- bernvec*rexp(n,par[4]) + (1-bernvec)*rnorm(n,par[2], par[3])
+  par(mfrow = c(2,1))
+  hist(modelvec, breaks = 100, xlim = c(-200,200))
+  hist(data, breaks = 100, xlim = c(-200,200))
+}
+
+Route900 <- filter(FlightDelays_Full, Route == 900)
+Route900MLE <- MLE_BDEDIST(x = Route900$ARR_DELAY)
+PLOT_BDE(par = Route900MLE$par, 164, data = Route900$ARR_DELAY)
+
+randnorm <- rnorm(1000)
+randnormMLE<- MLE_BDEDIST(x = randnorm)
+PLOT_BDE(par = randnormMLE$par, 1000, data = randnorm)
+
+bigprcp <- filter(FlightDelays_Full, prcp>=100)
+MLEbigprcp<-MLE_BDEDIST(bigprcp$ARR_DELAY)
