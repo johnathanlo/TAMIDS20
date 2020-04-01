@@ -397,11 +397,14 @@ bigprcp <- filter(FlightDelays_Full, prcp>=100)
 MLEbigprcp<-MLE_BDEDIST(bigprcp$ARR_DELAY)
 
 #########RF##########
+library(caret)
+library(dplyr)
 FlightDelays_RF <- FlightDelays_Full
 FlightDelays_RF[is.na(FlightDelays_RF)] <- 0
 FlightDelays_RF$Route <- as.factor(FlightDelays_RF$Route)
 FlightDelays_RF <- filter(FlightDelays_RF, CANCELED == 0)
-FlightDelays_RF <- select(FlightDelays_RF, -FL_DATE, - FL_NUM, -DEP_DELAY, -DEP_DELAY_NEW, -DEP_DEL15, -DEP_DELAY_GROUP,  -TAXI_OUT, -WHEELS_OFF, -WHEELS_ON, -TAXI_IN, -ARR_TIME, -ARR_DELAY_NEW, -ARR_DEL15, -ARR_DELAY_GROUP, -ARR_TIME_BLK, -CANCELED, -CANCELLATION_CODE, -DIVERTED, -ACTUAL_ELAPSED_TIME, -CARRIER_DELAY, -WEATHER_DELAY, -NAS_DELAY, -SECURITY_DELAY, -LATE_AIRCRAFT_DELAY)
+FlightDelays_RF <- select(FlightDelays_RF, -FL_DATE, - FL_NUM, -DEP_DELAY, -DEP_DELAY_NEW, -DEP_DEL15, -DEP_DELAY_GROUP,  -TAXI_OUT, -WHEELS_OFF, -WHEELS_ON, -TAXI_IN, -ARR_TIME, -ARR_DELAY_NEW, -ARR_DEL15, -ARR_DELAY_GROUP, -ARR_TIME_BLK, -CANCELED, -CANCELLATION_CODE, -DIVERTED, -ACTUAL_ELAPSED_TIME, -CARRIER_DELAY, -WEATHER_DELAY, -NAS_DELAY, -SECURITY_DELAY, -LATE_AIRCRAFT_DELAY, -DEST_CITY, -DEST_STATE, -DEP_TIME, -DEP_TIME_BLK, -ID, -AIRPORT, -NAME, -DIST, -ID.DEST, -NAME.DEST, -DIST.DEST, -ORIGIN.DEST, -Dest_State, -Origin_State)
+FlightDelays_RF$carrier_lg[is.na]
 save(list = c("FlightDelays_RF"), file = "data/FlightDelays_RF.RData")
 FlightDelays0505 <- sample_n(FlightDelays_RF, size = 1000)
 sim_rf_mod = train(
@@ -413,3 +416,23 @@ sim_rf_mod = train(
   tuneLength = 5,
   na.action = na.omit,
 )
+FlightDelays_RF_001 <- sample_frac(FlightDelays_RF, size = .001)
+# sim_rf_mod = train(
+#   ARR_DELAY ~ .,
+#   data = FlightDelays_RF_01,
+#   method = "rf",
+#   trControl = trainControl(method = "cv",number=5),
+#   #  preProcess = c("center", "scale"),
+#   tuneLength = 5,
+#   na.action = na.omit,
+# )
+sim_knn_mod = train(
+  ARR_DELAY ~ .,
+  data = FlightDelays_RF_001,
+  method = "knn",
+  trControl = trainControl(method = "cv", number = 5),
+  preProcess = c("center", "scale"),
+  tuneGrid = expand.grid(k = seq(1, 31, by = 2))
+  #tuneLength=16
+)
+
