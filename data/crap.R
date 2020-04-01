@@ -403,9 +403,9 @@ FlightDelays_RF$Route <- as.factor(FlightDelays_RF$Route)
 FlightDelays_RF <- filter(FlightDelays_RF, CANCELED == 0)
 FlightDelays_RF <- select(FlightDelays_RF, -FL_DATE, - FL_NUM, -DEP_DELAY, -DEP_DELAY_NEW, -DEP_DEL15, -DEP_DELAY_GROUP,  -TAXI_OUT, -WHEELS_OFF, -WHEELS_ON, -TAXI_IN, -ARR_TIME, -ARR_DELAY_NEW, -ARR_DEL15, -ARR_DELAY_GROUP, -ARR_TIME_BLK, -CANCELED, -CANCELLATION_CODE, -DIVERTED, -ACTUAL_ELAPSED_TIME, -CARRIER_DELAY, -WEATHER_DELAY, -NAS_DELAY, -SECURITY_DELAY, -LATE_AIRCRAFT_DELAY)
 save(list = c("FlightDelays_RF"), file = "data/FlightDelays_RF.RData")
-FlightDelays0505 <- sample_frac(FlightDelays_RF, size = .01)
+FlightDelays0505 <- sample_n(FlightDelays_RF, size = 1000)
 sim_rf_mod = train(
-  ARR_DEL15 ~ .,
+  ARR_DELAY ~ .,
   data = FlightDelays0505,
   method = "rf",
   trControl = trainControl(method = "cv",number=5),
