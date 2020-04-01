@@ -1,0 +1,69 @@
+\documentclass[12pt, a4paper]{book}
+\usepackage[utf8]{inputenc}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage[comma,authoryear]{natbib}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=R,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+\linespread{1.3}
+\graphicspath{{./}}
+\title{Big Data Energy 2020 TAMIDS Competition}
+\author{Johnathan Lo \& Isaac Ke}
+\date{3/28/20}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Lagr}{\mathcal{L}}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\chapter{Introduction}
+\chapter{Executive Summary}
+	\section{Problem and approach}
+	\section{Data preprocessing}
+	\section{Exploratory analysis}
+	\section{Model formulation}
+	\section{Model selection}
+	\section{Applications and conclusions}
+\chapter{Motivation}
+\chapter{Data collection and description}
+\chapter{Exploratory data analysis}
+\chapter{Model formulation}
+\chapter{Model selection}
+\chapter{Forecasting Flight Delays for 2019 Q3}
+\chapter{Business recommendations}
+\chapter{Closing thoughts}
+\chapter{Appendix}
+	\section{References}
+	\section{Additional figures, tables, and data}
+\pagebreak
+
+\bibliographystyle{natdin}
+\nocite{*}
+\bibliography{sources}
+\end{document}
