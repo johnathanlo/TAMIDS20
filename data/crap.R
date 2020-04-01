@@ -410,6 +410,17 @@ levels(FlightDelays_RF$carrier_low) <- c(levels(FlightDelays_RF$carrier_low), "U
 FlightDelays_RF$carrier_low[is.na(FlightDelays_RF$carrier_low)] <- "Unk"
 save(list = c("FlightDelays_RF"), file = "data/FlightDelays_RF.RData")
 
+FlightDelays0505 <- sample_n(FlightDelays_RF, size = 1000)
+sim_rf_mod = train(
+  ARR_DELAY ~ .,
+  data = FlightDelays0505,
+  method = "rf",
+  trControl = trainControl(method = "cv",number=5),
+  #  preProcess = c("center", "scale"),
+  tuneLength = 5,
+  na.action = na.omit,
+)
+
 FlightDelays_RF_001 <- sample_frac(FlightDelays_RF, size = .001)
 # sim_rf_mod = train(
 #   ARR_DELAY ~ .,
