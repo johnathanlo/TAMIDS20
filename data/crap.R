@@ -441,3 +441,6 @@ sim_knn_mod = train(
   #tuneLength=16
 )
 
+save(list = c("sim_knn_mod"), file = "data/knn.model.RData")
+
+sim_knn_mod$results
