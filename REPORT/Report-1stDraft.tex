@@ -8,6 +8,7 @@
 \usepackage[comma,authoryear]{natbib}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{wrapfig}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -60,13 +61,20 @@
 	\tab As stated in the introduction, flight delays can have a wide-ranging effect on the economy. Most airline companies have already done everything in their power to mitigate and reduce delays. We are interested in finding whether delays can be further mitigated, and whether those variables can be controlled by airline companies. To the extent that some delays are unavoidable or difficult to predict, we are also interested in devising methods to minimize the impact of those delays, whether by reducing the number of passengers affected, offering alternate routes to affected passengers, or discounting tickets. Overall, for the benefit of airline companies, consumers, and society-at-large, we should minimize flight delays, or the impact thereof. 
 	\section{Data collection}
 	\tab Our data was provided to us as csv files by the competition organizers. The primary dataset was composed of over 10,000,000 observations of 50 variables. Each observation was a distinct flight that occurred between 1/1/2018 and XX/XX/2019, and the 70 covariates included origin, destination, quarter, arrival delay, departure delay, distance, and many more variables pertaining to each flight. An auxiliary dataset included pricing data given for each route, by quarter. \\
-	\tab In addition to the data provided to us by the competition organizers, we also sought out additional data to enhance our dataset. We obtained geographic coordinates for each airport from XXXXX [cite], weather data from NOAA databases through the NCDC API [cite], and data on airport characteristics from the FAA [cite]. A full list of covariates can be found in \underline{Supplementary Table 1}. 
+	\tab In addition to the data provided to us by the competition organizers, we also sought out additional data to enhance our dataset. We obtained geographic coordinates for each airport from XXXXX [cite], and weather data from NOAA databases through the NCDC API [cite]. The geographic coordinates are given in decimal format, and our weather data describes meteorological events near the origin and destination of each flight. Importantly, data \textit{along} the flight path was not obtained, due to time constraints and complexity. A full list of covariates along with brief descriptions can be found in \underline{Supplementary Table 1}. 
 	\section{Software}
 	\tab All analyses were performed in R v3.6.3 [cite]. Packages used include, but are not limited to, \textit{ggplot2}, \textit{dplyr}, \textit{caret}, \textit{rnoaa}, and \textit{Isaac put stuff here}. Individual datasets were loaded as \textit{data.frame} objects and combined using \textit{merge}. The final dataset can be found as a csv file in \underline{Supplementary Data 1}. 
 	
 \chapter{Exploratory data analysis}
+	\section{Data wrangling}
+	Our dataset was drawn from 4 different sources - flight delays and fare data, provided to us by the competition organizers, geographic coordinates from XXXXX, and weather data from NOAA. Flight delays and geographic coordinates were combined by merging on common  origin and destination names. The resulting dataframe was then combined with fare data by common routes, year, and quarter. Adding weather data was more challenging in that the observations relate information collected by weather stations, and not the airports themselves. Thus, weather station coordinates were cross referenced with airport coordinates to find the closest active weather station to each airport. Due to this constraint, 10 airports, corresponding to XXXXX observations were dropped, due to the lack of NOAA weather stations nearby. Weather data was then merged with the rest of the data on common dates and airports, with separate variables for weather at origin and weather at destination.  
 	\section{Distribution of flight delays}
-	\tab Histograms of different covariates describing delay times are shown in \underline{Fig 1}. 
+	\tab A histogram of all arrival delays is shown in \underline{Fig 1}. Clearly, the data is strongly right-skewed. To correct the skewness, a cube-root transformation was performed, but subsequent Shapiro-Wilk test provided strong evidence against normality for this transformation, so it was abandoned. To evaluate the \\
+	\begin{wrapfigure}{l}{0.45\textwidth}
+	\centering
+	 \includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
+	 \caption{Histogram of arrival time for all observations in the dataset}
+	 \end{wrapfigure}
 		\subsection{Geographic distribution of flight delays}
 		\subsection{Temporal distribution of flight delays}
 		\subsection{Weather-based distribution of flight delays}
