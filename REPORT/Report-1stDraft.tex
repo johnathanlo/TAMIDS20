@@ -38,11 +38,15 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\Lagr}{\mathcal{L}}
+\newcommand\tab[1][1cm]{\hspace*{#1}}
 
 \begin{document}
 \maketitle
 \tableofcontents
 \chapter{Introduction}
+\tab Reliable transportation supports a strong economy by facilitating the rapid and timely exchange of goods and services and bolstering tourism revenue. In the US, the transportation industry accounts for XXX billion dollars per year, which is XXX\% of GDP [cite]. Of that economic product, XXX\% is accounted for by the airline industry [cite]. A key metric for evaluating the efficiency of airline industry production is flight delay time. In 2018, flight delays led to an economic loss of XXX billion dollars[cite]. For individual companies, delays can influence consumer choice, and for the industry itself, unmitigated delays can impel consumers to switch to substitute goods, such as automotive or rail-based transport. \\
+\tab Therefore, a major goal of this project is to analyze flight delays and diagnose areas for improvement. We intend to create models using publicly available data that can accurately predict future delays. In doing so, we can hopefully uncover significant and controllable covariates that can help guide airline companies to reduce flight delays. 
+
 \chapter{Executive Summary}
 	\section{Problem and approach}
 	\section{Data preprocessing}
@@ -50,9 +54,24 @@
 	\section{Model formulation}
 	\section{Model selection}
 	\section{Applications and conclusions}
-\chapter{Motivation}
-\chapter{Data collection and description}
+	
+\chapter{Motivation, data description, and software}
+	\section{Motivation}
+	\tab As stated in the introduction, flight delays can have a wide-ranging effect on the economy. Most airline companies have already done everything in their power to mitigate and reduce delays. We are interested in finding whether delays can be further mitigated, and whether those variables can be controlled by airline companies. To the extent that some delays are unavoidable or difficult to predict, we are also interested in devising methods to minimize the impact of those delays, whether by reducing the number of passengers affected, offering alternate routes to affected passengers, or discounting tickets. Overall, for the benefit of airline companies, consumers, and society-at-large, we should minimize flight delays, or the impact thereof. 
+	\section{Data collection}
+	\tab Our data was provided to us as csv files by the competition organizers. The primary dataset was composed of over 10,000,000 observations of 50 variables. Each observation was a distinct flight that occurred between 1/1/2018 and XX/XX/2019, and the 70 covariates included origin, destination, quarter, arrival delay, departure delay, distance, and many more variables pertaining to each flight. An auxiliary dataset included pricing data given for each route, by quarter. \\
+	\tab In addition to the data provided to us by the competition organizers, we also sought out additional data to enhance our dataset. We obtained geographic coordinates for each airport from XXXXX [cite], weather data from NOAA databases through the NCDC API [cite], and data on airport characteristics from the FAA [cite]. A full list of covariates can be found in \underline{Supplementary Table 1}. 
+	\section{Software}
+	\tab All analyses were performed in R v3.6.3 [cite]. Packages used include, but are not limited to, \textit{ggplot2}, \textit{dplyr}, \textit{caret}, \textit{rnoaa}, and \textit{Isaac put stuff here}. Individual datasets were loaded as \textit{data.frame} objects and combined using \textit{merge}. The final dataset can be found as a csv file in \underline{Supplementary Data 1}. 
+	
 \chapter{Exploratory data analysis}
+	\section{Distribution of flight delays}
+	\tab Histograms of different covariates describing delay times are shown in \underline{Fig 1}. 
+		\subsection{Geographic distribution of flight delays}
+		\subsection{Temporal distribution of flight delays}
+		\subsection{Weather-based distribution of flight delays}
+		\subsection{Carrier-based distribution of flight delays}
+		\subsection{Airport-based distribution of flight delays}
 \chapter{Model formulation}
 \chapter{Model selection}
 \chapter{Forecasting Flight Delays for 2019 Q3}
