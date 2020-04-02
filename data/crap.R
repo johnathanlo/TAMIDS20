@@ -440,3 +440,7 @@ sim_knn_mod = train(
   tuneGrid = expand.grid(k = seq(1, 31, by = 2))
   #tuneLength=16
 )
+
+save(list = c("sim_knn_mod"), file = "data/knn.model.RData")
+
+sim_knn_mod$results
