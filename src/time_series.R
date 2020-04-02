@@ -6,11 +6,23 @@ require(quantmod)
 require(tidyquant)
 require(tseries)
 require(ggplot)
-
+## Multi-Seasonal Time Series 
 dshw()
-msts()
-#seasonal.periods=c(19,19*7)  for hourly and weekly
+multi_season = msts(hourly_delay_ts, seasonal.periods = c(19,19*7)) #hourly AND weekly
+summary(multi_season)
+forecast_multi = forecast(multi_season, h=1596)
+plot(forecast_multi)
 
+
+g1 <- autoplot(forecast_multi) + 
+  ggtitle("Hourly and Weekly Seasons: Forecast") + 
+  ylab("y") +
+  coord_cartesian(xlim = c(75, 82))
+plot(g1)
+
+
+
+########################################33
 
 time_series_weekly = group_by(FlightDelays, FL_DATE, DEP_TIME_BLK) %>% summarise(median_hourly_delay = median(ARR_DELAY, na.rm=TRUE))
 
@@ -49,16 +61,31 @@ plot(daily_delay_ts)
 
 arima_fit_daily = auto.arima(daily_delay_ts, D=2)
 summary(arima_fit_daily)
+accuracy(arima_fit_daily)
 
 findfrequency(daily_delay_ts)
 forecast = forecast(arima_fit_daily, h=12)
 plot(forecast)
+
+
 
 g3 <- autoplot(forecast) + 
   ggtitle("Weekly forecast") + 
   ylab("y") +
   coord_cartesian(xlim = c(75, 82))
 plot(g3)
+
+#Detect lag (?)
+acf(daily_delay_ts)
+pacf(daily_delay_ts)
+
+# Check Residuals
+plot(forecast$residuals)
+qqnorm(forecast$residuals) #We assume the errors to be independently distributed with the normal distribution.
+acf(forecast$residuals) #autocorrelation function
+pacf(forecast$residuals) #partial autocoreelation
+
+
 
 ###### backup: exponential smoothing (assuming no seasonality)
 Delay.Forecasts = HoltWinters(median_daily_delay, beta=FALSE, gamma = FALSE)
@@ -90,8 +117,3 @@ ggAcf(daily_delay_ts)
 adf.test(daily_delay_ts) ##Augmented Dickey-Fuller Test
 
 
-########### Fit time series to residuals
-summary(numflights_fit)
-names(numflights_fit)
-numflights_fit$residuals
-residuals_fit = numflights_fit$residuals
