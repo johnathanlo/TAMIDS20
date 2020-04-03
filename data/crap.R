@@ -444,3 +444,13 @@ sim_knn_mod = train(
 save(list = c("sim_knn_mod"), file = "data/knn.model.RData")
 
 sim_knn_mod$results
+test<- c()
+for(i in 1:1000){
+  test <- c(test,predict(sim_knn_mod, newdata = FlightDelays_RF[i,]))
+}
+plot(test, FlightDelays_RF$ARR_DELAY[1:1000])
+test.mean <- mean(FlightDelays_RF$ARR_DELAY[1:1000])
+test.SST <- sum((FlightDelays_RF$ARR_DELAY[1:1000]-test.mean)^2)
+test.SSR <- sum((test-test.mean)^2)
+test.SSE <- sum((FlightDelays_RF$ARR_DELAY[1:1000]-test)^2)
+test.Rsq <- test.SSR/test.SST
