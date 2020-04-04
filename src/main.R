@@ -7,7 +7,7 @@ FlightDelays$DAY_OF_MONTH <- as.factor(FlightDelays$DAY_OF_MONTH)
 FlightDelays$DAY_OF_WEEK <- as.factor(FlightDelays$DAY_OF_WEEK)
 FlightDelays$ARR_DELAY[is.na(FlightDelays$ARR_DELAY)]<- 0
 
-
+save(list = c("FlightDelays"), file = "data/FlightDelays.RData")
 
 AirFares <- read.csv("data/AirFares.csv")
 colnames(AirFares)<-toupper(colnames(AirFares))
@@ -37,6 +37,8 @@ MeanDelaysbyCarrier <- summarise(FlightDelays05_byCarrier, avg = mean(LATE_ARR))
 source("src/MakeLateArrHist.R")
 LateArrHist <- MakeLateArrHist(FlightDelays05 = FlightDelays05)
 plot(LateArrHist)
+
+
 
 ###For AA###
 AA_LateArrs <- MakeLateArrHist(FlightDelays05 = FlightDelays05, carrier = "CARRIER_AA")
