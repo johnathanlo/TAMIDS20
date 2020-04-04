@@ -206,4 +206,4 @@ hist(snow_little$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of
 hist(snow_big$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Snow: >100 mm", xlab = "snow_more$ARR_DELAY")
 
 snow_big_nozero = filter(snow_big, CANCELED !=1)
-hist(snow_big_nozero$ARR_DELAY, breaks=1000, xlim =c(-200,400))
+hist(snow_big_nozero$ARR_DELAY, breaks=1000, xlim =c(-200,400), main = "Histogram of Snow: >100 mm (Canceled Flights Removed)", xlab = "snow_more$ARR_DELAY")

@@ -6,6 +6,9 @@ require(quantmod)
 require(tidyquant)
 require(tseries)
 require(ggplot)
+require(foreign)
+require(plm)
+
 ## Multi-Seasonal Time Series 
 dshw()
 multi_season = msts(hourly_delay_ts, seasonal.periods = c(19,19*7)) #hourly AND weekly
@@ -75,7 +78,12 @@ g3 <- autoplot(forecast) +
   coord_cartesian(xlim = c(75, 82))
 plot(g3)
 
-#Detect lag (?)
+#Detect lag (?), serial dependence
+#Autocorrelation is a type of serial dependence. Specifically, autocorrelation is when a time series is linearly related to a lagged version of itself. By contrast, correlation is simply when two independent variables are linearly related.
+#. As we can infer from the graph above, the autocorrelation continues to decrease as the lag increases, confirming that there is no linear association between observations separated by larger lags.
+
+# we need three variables: p, d, and q which are non-negative integers that refer to the order of the autoregressive, integrated, and moving average parts of the model respectively.
+
 acf(daily_delay_ts)
 pacf(daily_delay_ts)
 
@@ -115,5 +123,15 @@ plot(forecast)
 ###############
 ggAcf(daily_delay_ts)
 adf.test(daily_delay_ts) ##Augmented Dickey-Fuller Test
+
+
+
+
+
+
+
+
+##################################################     LONGITUDINAL DATA/PANEL DATA/ CROSS-sectional time series data 
+coplot(ARR_DELAY ~ FL_DATE|DEST, type='l', data = FlightDelays_Full)
 
 
