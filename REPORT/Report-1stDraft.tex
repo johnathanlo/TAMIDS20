@@ -146,20 +146,27 @@
 	 		\includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
 	 		\caption{Fig 10 - Histogram of samples from distribution given by MLE, and histogram of values from data (fig 9)}
 	 		\end{wrapfigure}
-	\tab To validate this distribution, a QQ plot was made of the observed arrival times against the mixture distribution under the parameter estimates from the MLE (\underline{Fig. 11}). From this plot, it can be observed that our mixture distribution is in fact able to describe the observed values of arrival time quite accurately. Note that the arrival times are given as discrete values (as minutes), hence the "jumps" from percentile to percentile. It is important to note here, however, that our distribution does fail to describe data points in the extreme upper range of observations. \\
+	\tab To validate this distribution, a QQ plot was made of the observed arrival times against the mixture distribution under the parameter estimates from the MLE (\underline{Fig. 11}). From this plot, it can be observed that our mixture distribution is in fact able to describe the observed values of arrival time quite accurately. Note that the arrival times are given as discrete values (as minutes), hence the "jumps" from percentile to percentile. It is important to note here, however, that our distribution fails to describe data points in the extreme upper range of observations, p<.001. Some delays were quite extreme, with values in excess of 1000 minutes. To prevent such outliers from having outsize effect on our downstream analyses, we further pared the dataset here to include only data below the 99th percentile.  \\
 			\begin{wrapfigure}{r}{0.45\textwidth}
 			\centering
 	 		\includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
 	 		\caption{Fig 11  - QQ plot of of data vs theoretical distribution}
 	 		\end{wrapfigure}
-	\tab An additional approach to validating this distribution would be through conditional density estimation.\\
+	\tab Further, we see that conditional density estimation agrees with our theoretical parametric distribution. In \underline{Fig 12}, we show comparisons of the empirical conditional density vs densities given by our theoretical distribution with parameter estimates from MLE. Therefore, we are confident in using our theoretical distribution to describe arrival times across all factor levels. \\
+			\begin{wrapfigure}{r}{0.45\textwidth}
+			\centering
+	 		\includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
+	 		\caption{Fig 12  - Comparison of several key conditional density estimates with our theoretical distribution}
+	 		\end{wrapfigure}
+	\section{Simple Linear Regression}
+	\tab Having determined a general form for the conditional distribution of the response, we proceeded to fit a simple linear regression model on all covariates.
 	\section{Logistic regression}
 	\tab Another approach we wanted to try was to predict whether or not a flight would be delayed, regardless of time. To do this we did a logistic regression. Here are plots. Here are the problems. Here is how we tried to fix it. Here is how we failed.
 	\section{Time series}
 	\tab From our exploratory data analysis, we noted that several different categorical variables related to time showed significant effects on the mean arrival time. We thought the data might have an underlying time series, so our approach here was to construct a time series and then perform regression on the residuals. 
 	
-	\section{Linear Regression}
-	\tab From our data exploration, we see that for major covariates, we do not see a change in the general shape of the distribution itself, only small changes in the parameters. Based on this, we make the simplifying assumption that the conditional distribution is identical and independent across all combinations of factor levels, keeping in mind the limitations of this approach.  Furthermore, simplified model, use p instead of location parameter, show moments, describe strategy for producing conditional distributions of response based on 1st, 2nd, 3rd moments from data. Give equations. If the fixed effect model worked, then we would have fit that model and then fit a linear regression on the residuals to try to capture all effects. \\
+	\section{Dynamic linear model}
+	\tab Last but not least, we   From our data exploration, we see that for major covariates, we do not see a change in the general shape of the distribution itself, only small changes in the parameters. Based on this, we make the simplifying assumption that the conditional distribution is identical and independent across all combinations of factor levels, keeping in mind the limitations of this approach.  Furthermore, simplified model, use p instead of location parameter, show moments, describe strategy for producing conditional distributions of response based on 1st, 2nd, 3rd moments from data. Give equations. If the fixed effect model worked, then we would have fit that model and then fit a linear regression on the residuals to try to capture all effects. \\
 	
 
 \chapter{Forecasting Flight Delays for 2019 Q3}
