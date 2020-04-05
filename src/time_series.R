@@ -10,41 +10,52 @@ require(foreign)
 require(plm)
 
 ## Multi-Seasonal Time Series 
-dshw()
+#dshw()
 multi_season = msts(hourly_delay_ts, seasonal.periods = c(19,19*7)) #hourly AND weekly
 summary(multi_season)
+#autoplot(multi_season, main ="Multi-Seasonal Time-Series (Hourly and Weekly Seasonal Periods)", ylab="Arrival Delay (minutes)", xlab = "Time (~Weeks Since Jan 1, 2018)" )
 forecast_multi = forecast(multi_season, h=1596)
-plot(forecast_multi)
+#plot(forecast_multi, xlim=c(0,80))
 
 
 g1 <- autoplot(forecast_multi) + 
-  ggtitle("Hourly and Weekly Seasons: Forecast") + 
-  ylab("y") +
-  coord_cartesian(xlim = c(75, 82))
+  ggtitle("Multi-Seasonal Time-Series (Hourly and Weekly Seasonal Periods): Q3 Forecast") + 
+  ylab("Median Arrival Delay (minutes)") +
+  xlab("Time (Weeks Since Jan 1, 2018)")+
+  coord_cartesian(xlim = c(75, 82), ylim=c(-20,25))
 plot(g1)
 
 
 
-########################################33
+######################################## HOURLY DELAY
 
-time_series_weekly = group_by(FlightDelays, FL_DATE, DEP_TIME_BLK) %>% summarise(median_hourly_delay = median(ARR_DELAY, na.rm=TRUE))
+time_series_hourly = group_by(FlightDelays, FL_DATE, DEP_TIME_BLK) %>% summarise(median_hourly_delay = median(ARR_DELAY, na.rm=TRUE))
 
-hourly_delay_ts = ts(time_series_weekly$median_hourly_delay, deltat = 1/19)
-autoplot(hourly_delay_ts)
+hourly_delay_ts = ts(time_series_hourly$median_hourly_delay, deltat = 1/19)
+autoplot(hourly_delay_ts, main ="Time Series of Median Arrival Delay", xlab = "Time (Day since Jan 1, 2018)", ylab = "Arrival Delay (minutes)")
 decompose(hourly_delay_ts)
 plot(decompose(hourly_delay_ts))
 
 arima_fit_hourly = auto.arima(hourly_delay_ts, D=1)
 summary(arima_fit_hourly)
 
+acf(hourly_delay_ts, main = "ACF Plot: Daily Time Series")
+pacf(hourly_delay_ts, main = "PACF Plot: Daily Time Series")
+
+
 #findfrequency(daily_delay_ts)
-forecast_hourly = forecast(arima_fit_hourly, h=1596)
-plot(forecast_hourly[])
+forecast_hourly = forecast(arima_fit_hourly, h=19*7*12)
+plot(forecast_hourly)
+
+# Check Residuals
+plot(forecast$residuals, main = "Residuals", xlab = "Week Since Jan 1, 2018")
+qqnorm(forecast$residuals) #We assume the errors to be independently distributed with the normal distribution.
+plot(forecast$fitted , forecast$residuals, main = "Residuals vs. Fitted", xlab = "Fitted Values", ylab = "Residuals")
 
 g2 <- autoplot(forecast_hourly) + 
-  ggtitle("Hourly forecast") + 
-  ylab("y") +
-  coord_cartesian(xlim = c(545, 640))
+  ggtitle("Q3 Forecast (Daily)") + 
+  ylab("Median Arrival Delay (minutes)") + xlab("Time (Days Since Jan 1, 2018)")+
+  coord_cartesian(xlim = c(540, 560), ylim = c(-15, 20))
 plot(g2)
 
 ########################FlightDelaysBootstrap
@@ -70,33 +81,33 @@ plot(g2)
 
 
 
-## TIME SERIES FOR MEDIAN DAILY DELAY
+## TIME SERIES FOR MEDIAN WEEKLY DELAY
 median_daily_delay = group_by(FlightDelays, FL_DATE) %>% summarise(median_daily_delay = median(ARR_DELAY, na.rm=TRUE))
 
-median_daily_delay = rbind(median_daily_delay, median_daily_delay)
-daily_delay_ts = ts(median_daily_delay$median_daily_delay, deltat=1/7)
+
+daily_delay_ts = ts(median_daily_delay$median_daily_delay, delta=1/7)
 autoplot(daily_delay_ts)
-str(daily_delay_ts)
 decompose(daily_delay_ts)
 plot(decompose(daily_delay_ts))
 
-par(mfrow=c(1,1))
-plot(daily_delay_ts)
 
 arima_fit_daily = auto.arima(daily_delay_ts, D=2)
 summary(arima_fit_daily)
-accuracy(arima_fit_daily)
 
-findfrequency(daily_delay_ts)
-forecast = forecast(arima_fit_daily, h=12)
+acf(daily_delay_ts, main = "ACF Plot: Weekly Time Series")
+pacf(daily_delay_ts, main = "PACF Plot: Weekly Time Series")
+
+#findfrequency(daily_delay_ts)
+forecast = forecast(arima_fit_daily, h=63)
 plot(forecast)
 
 
 
 g3 <- autoplot(forecast) + 
-  ggtitle("Weekly forecast") + 
-  ylab("y") +
-  coord_cartesian(xlim = c(75, 82))
+  ggtitle("Q3 Forecast (Weekly)") + 
+  ylab("Median Arrival Delay (minutes)") + 
+  xlab("Time (Weeks Since Jan 1, 2018)")+
+  coord_cartesian(xlim = c(70, 83), ylim=c(-30,10))
 plot(g3)
 
 #Detect lag (?), serial dependence
@@ -105,8 +116,8 @@ plot(g3)
 
 # we need three variables: p, d, and q which are non-negative integers that refer to the order of the autoregressive, integrated, and moving average parts of the model respectively.
 
-acf(daily_delay_ts)
-pacf(daily_delay_ts)
+acf(hourly_delay_ts)
+pacf(hourly_delay_ts)
 
 # Check Residuals
 plot(forecast$residuals)
@@ -114,7 +125,7 @@ qqnorm(forecast$residuals) #We assume the errors to be independently distributed
 acf(forecast$residuals) #autocorrelation function
 pacf(forecast$residuals) #partial autocoreelation
 
-
+plot(forecast$fitted , forecast$residuals)
 
 ###### backup: exponential smoothing (assuming no seasonality)
 Delay.Forecasts = HoltWinters(median_daily_delay, beta=FALSE, gamma = FALSE)
