@@ -1,0 +1,169 @@
+---
+title: "STAT482-Time series"
+author: "Huiyan Sang"
+date: 
+output: slidy_presentation
+--- 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,out.height="60%", out.width="60%")
+```
+
+## Time Series
+- A time series is simply a series of data points ordered in time. 
+- The goal is to study the temporal pattern and/or make a forecast for the future.
+- Examples:
+  + Stock price
+  + Electricity consumption
+  + Daily temperature 
+  
+## Time series
+
+- Is the times series autocorrelated?
+- Is it stationary?
+- Is there a seasonality?
+
+## R packages
+- xts
+- zoo
+- forecast
+- quantmod
+- tidyquant
+
+## Summary with time series object
+
+\tiny
+```{r, echo = TRUE}
+library(forecast)
+library(ggplot2)
+head(gas)
+start(gas)
+end(gas)
+frequency(gas)
+```
+## Plot with time series object
+\tiny
+```{r,echo=TRUE,out.height="70%", out.width="70%"}
+autoplot(gas) ## this is a time series object
+tseries_sub <- window(gas, start=c(1990, 1), end=c(1994,12))
+print(tseries_sub)
+is.ts(gas)
+```
+\normalsize
+## Convert your data to a time series object
+
+\tiny
+```{r,echo=TRUE,out.height="70%", out.width="70%"}
+head(economics,2)
+tail(economics ,2)
+```
+
+## Convert your data to a time series object and plot it
+```{r,echo=TRUE}
+dat_ts <- ts(economics$unemploy, start = c(1967, 7), end = c(2015, 4), frequency = 12) 
+autoplot(dat_ts)
+```
+
+## Convert your data to a multivariate time series object and plot it
+
+```{r,echo=TRUE}
+dat_ts <- ts(economics[,2:6], start = c(1967, 7), end = c(2015, 4), frequency = 12) 
+autoplot(dat_ts[,c('pop','uempmed','unemploy')]) ## plot multiple time series 
+```
+
+
+  
+## Autocorrelations
+- Autocorrelation, also called serial correlation, is the correlation of a signal with a delayed copy of itself as a function of delay. 
+- It measures the similarity between observations as a function of the time lag between them. 
+  + Lag-1 autocorrelation, $\rho(1)=\text{corr}(x_t,x_{t-1})$
+  + Lag-2 autocorrelation, $\rho(2)=\text{corr}(x_t,x_{t-2})$
+  + $\rho(k)$ is called the autocorrelation function that shows lag-k correlations 
+
+## Autocorrelations 
+
+```{r, echo = TRUE} 
+ggAcf(gas)
+```
+ 
+## More on autocorrelations
+```{r, echo = TRUE} 
+g1=ggAcf(nhtemp) ## Annual temperatures in New Haven
+g2=ggAcf(nottem) ## Monthly temperatures at Nottingham
+gridExtra::grid.arrange(g1,g2,nrow=2)
+```
+
+## Seasonality
+
+Additive decompositions
+Time series = Seasonal + Trend + Random 
+
+```{r, echo = TRUE}  
+decom.ts=decompose(nottem)
+plot(decom.ts)
+```
+ 
+
+## Fit an autoregressive integrated moving averages model. 
+
+auto.arima() automatically determines orders and check for seasonality etc. 
+
+```{r,echo=TRUE}
+fit <- auto.arima(gas) 
+#accuracy(fit)
+```
+
+
+## Forecasting usingthe fitted arima model
+\tiny
+```{r,echo=TRUE}
+forecast(fit, 1) 
+plot(forecast(fit, 1)) 
+```
+ 
+
+## Stationarity vs Nonstationarity
+- Definition
+If $\{y_t\}$ is a stationary time series, then for all $s$, the
+distribution of $(y_t,\ldots, y_{t+s})$ does not depend on $t$. 
+- Its statistical properties (mean, variance and covariance among time series) do not change over time.
+- How to check stationarity?
+- How to convert nonstationary TS to stationary TS?
+
+## Stationarity vs Nonstationarity
+
+```{r,echo=TRUE}
+library(tseries) 
+plot(gas) 
+```
+ 
+## Augmented Dickey-Fuller test
+\tiny
+```{r,echo=TRUE} 
+adf.test(gas)  
+```
+ 
+
+## Take differences to make the time series stationary
+\tiny
+```{r,echo=TRUE}
+adf.test(diff(gas))
+```
+
+## Relationship between two time series
+\tiny
+Cross-correlation function (CCF) is defined analogously to the ACF. It measures the lagged correlation between two time series. $\rho(k)=\text{corr}(x_t,y_{t-k})$
+
+```{r,echo=TRUE}  
+dat_ts <- ts(economics[,c('pop','unemploy')], 
+             start = c(1967, 7), end = c(2015, 4), 
+             frequency = 12) 
+pop <- diff (dat_ts[,1])
+unemploy <- diff(dat_ts[,2])
+```
+
+## CCF plot
+
+```{r,echo=TRUE}
+ccf (pop[-c(1:7)], unemploy[-c(1:7)])
+```

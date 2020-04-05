@@ -375,3 +375,25 @@ arr_delay = as.data.frame(group_by(FlightDelays_Full, DEST, QUARTER) %>% mutate(
 arr_delay_subset = sample_n(arr_delay, 10000)
 fit = lm(ARR_DELAY ~ avg_arr_delay + DISTANCE, data = arr_delay)
 summary(fit)
+
+## XGBBOOST 
+require(xgboost)
+FlightDelays_XGBOOST <- select(FlightDelays_RF, -DEST, -ORIGIN, -Route, -DEST_CITY, -DEST_STATE, -ID, -AIRPORT, -NAME, -ID.DEST, -NAME.DEST, -ORIGIN.DEST, -Origin_State, -Dest_State)
+XGBOOST_subset = sample_n(FlightDelays_XGBOOST, 1000)
+xgb_model = train(x=XGBOOST_subset, y=XGBOOST_subset$ARR_DELAY,
+                  method = "xgbTree",
+                  nrounds=50,
+                  max_depth = 6,
+                  subsample=0.85,
+                  colsample_bytree=0.7,
+                  eta = 0.1,
+                  trControl = trainControl(method="cv", number=5),
+                  verbose=TRUE)
+#warnings()
+
+#####sim_knn_mod
+names(sim_knn_mod)
+plot(sim_knn_mod)
+sim_knn_mod$bestTune
+sim_knn_mod$finalModel
+str(sim_knn_mod)
