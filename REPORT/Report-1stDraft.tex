@@ -131,34 +131,32 @@
 	 		\caption{Fig 8 - Airport histograms}
 	 		\end{figure}
 	 		
-<<<<<<< HEAD
 \chapter{Model formulation}
 	\section{Constructing a parametric distribution for delays}
 	 \tab We were interested in deducing the marginal distribution of arrival times from the data. Although it would have been relatively facile to estimate a valid empirical distribution, we decided that a parametric distribution would be more useful and intuitive. By establishing a set of parameters, further work could be directed towards estimating parameters under certain combinations of covariate values. With mostly categorical data, it then becomes feasible to estimate parameters for certain combinations of interesting variables. Parameterization also allows the density functions of the distribution to be readily expressed analytically.\\
-	\tab As seen in \underline{Fig 1}, the marginal distribution is strongly right skewed, and thus our first plan of action was to attempt a transformation to correct the skewness. A number of transformations were considered. With negative values in the data, log or square root transformations could only be applied by first shifting the data to be strictly positive. One way to do this would be to simply add the smallest (most negative) number to each of our delay times; however, it was decided that this approach rendered our results somewhat uninterpretable. Consider, for example, a new observation where the flight arrived earlier (with a flight delay time more negative) than any other flight in the dataset. Such an observation would not be supported in a distribution of log-transformed values. We also briefly considered cube root transformation, but as seen in \underline{Fig 9}, it does not result in normality or resemblance to any familiar parametric distribution. In lieu of transforming the data, we considered several well-known skewed distributions, but none of them fit well or appeared sensible.
+	\tab As seen in \underline{Fig 1}, the marginal distribution is strongly right skewed, and thus our first plan of action was to attempt a transformation to correct the skewness. A number of transformations were considered. With negative values in the data, log or square root transformations could only be applied by first shifting the data to be strictly positive. One way to do this would be to simply add the smallest (most negative) number to each of our delay times; however, it was decided that this approach rendered our results somewhat uninterpretable. Consider, for example, a new observation where the flight arrived earlier (with a flight delay time more negative) than any other flight in the dataset. Such an observation would not be supported in a distribution of log-transformed values. We also briefly considered cube root transformation, but as seen in \underline{Fig 9}, it does not result in normality or resemblance to any familiar parametric distribution. In lieu of transforming the data, we considered several well-known skewed distributions, but none of them fit well or appeared sensible.\\
 			\begin{wrapfigure}{l}{0.35\textwidth}
 			\centering
 	 		\includegraphics[width = .35 \textwidth]{../figures/LateArrivalsHistogram}
 	 		\caption{Fig 9 - density plot of cube root transformation vs normal distribution with same mean and variance}
 	 		\end{wrapfigure}
-	\tab Thus, we instead looked to construct a mixture distribution. The primary issue that we had been confronted with this far was finding a distribution that appeared to have sensible parameterizations.  Our search was rooted in the premise that not all delays are created equal;  we suspected that the majority of delays are "run-of-the-mill" events that do not result from any extraordinary circumstances in particular, while a minority of delays have true, substantial causes. This is similar to the rationale for a zero-inflated Poisson in manufacturing processes, in that most machines are in good working order and do not produce any products with defects, but some machines with defects will produce defective products by a Poisson distribution. As such, we decided upon a mixture of the form \begin{center}$$Y = UV + (1-U)T$$\end{center} with $U\sim Ber(p)$, $V\sim N(\mu,\sigma^2)$, and $T\sim exp(\lambda)$. In this model, $U$ describes whether or not a delay with "true, substantial causes" occurs, $V$ describes the distribution of arrival times when no extenuating circumstances occur, and $T$ describes arrival times under defined circumstances that result in lateness. Using MLE, we were able to generate estimates of the parameters for the marginal data, as shown in \underline{Fig 10}.
+	\tab Thus, we instead looked to construct a mixture distribution. The primary issue that we had been confronted with this far was finding a distribution that appeared to have sensible parameterizations.  Our search was rooted in the premise that not all delays are created equal;  we suspected that the majority of delays are "run-of-the-mill" events that do not result from any extraordinary circumstances in particular, while a minority of delays have true, substantial causes. This is similar to the rationale for a zero-inflated Poisson in manufacturing processes, in that most machines are in good working order and do not produce any products with defects, but some machines with defects will produce defective products by a Poisson distribution. As such, we decided upon a mixture of the form \begin{center}$$Y = UV + (1-U)T$$\end{center} with $U\sim Ber(p)$, $V\sim N(\mu,\sigma^2)$, and $T\sim exp(\lambda)$. In this model, $U$ describes whether or not a delay with "true, substantial causes" occurs, $V$ describes the distribution of arrival times when no extenuating circumstances occur, and $T$ describes arrival times under defined circumstances that result in lateness. Using MLE, we were able to generate estimates of the parameters for the marginal data, as shown in \underline{Fig 10}.\\
 			\begin{wrapfigure}{l}{0.45\textwidth}
 			\centering
 	 		\includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
 	 		\caption{Fig 10 - Histogram of samples from distribution given by MLE, and histogram of values from data (fig 9)}
 	 		\end{wrapfigure}
-	\tab To validate this distribution, a QQ plot was made of the observed arrival times against the mixture distribution under the parameter estimates from the MLE (\underline{Fig. 11}). From this plot, it can be observed that our mixture distribution is in fact able to describe the observed values of arrival time quite accurately. Note that the arrival times are given as discrete values (as minutes), hence the "jumps" from percentile to percentile. It is important to note here, however, that our distribution does fail to describe data points in the extreme upper range of observations. 
+	\tab To validate this distribution, a QQ plot was made of the observed arrival times against the mixture distribution under the parameter estimates from the MLE (\underline{Fig. 11}). From this plot, it can be observed that our mixture distribution is in fact able to describe the observed values of arrival time quite accurately. Note that the arrival times are given as discrete values (as minutes), hence the "jumps" from percentile to percentile. It is important to note here, however, that our distribution does fail to describe data points in the extreme upper range of observations. \\
 			\begin{wrapfigure}{r}{0.45\textwidth}
 			\centering
 	 		\includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
 	 		\caption{Fig 11  - QQ plot of of data vs theoretical distribution}
 	 		\end{wrapfigure}
-	\tab An additional approach to validating this distribution would be through conditional density estimation.
+	\tab An additional approach to validating this distribution would be through conditional density estimation.\\
+	\tab From our data exploration, we see that for major covariates, we do not see a change in the general shape of the distribution itself, only changes in the parameters. 
+	
 \chapter{Model selection}
-=======
-\chapter{Model Formulation}
-\chapter{Model Selection}
->>>>>>> b23702e2b03bee766bafd1c387ec066737496501
+
 \chapter{Forecasting Flight Delays for 2019 Q3}
 \chapter{Business Recommendations}
 \chapter{Closing Thoughts}
