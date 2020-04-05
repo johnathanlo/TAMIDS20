@@ -456,16 +456,62 @@ test.SSE <- sum((FlightDelays_RF$ARR_DELAY[1:1000]-test)^2)
 test.Rsq <- test.SSR/test.SST
 ########CDE#############
 library(hdrcde)
-cde_delay <- cde(FlightDelaysFinal_01$ORIGIN, FlightDelaysFinal_01$ARR_DELAY)
+FlightDelaysFinal01 <- sample_frac(FlightDelaysFinal, .01)
+cde_delay <- cde(FlightDelaysFinal$prcp, FlightDelaysFinal$ARR_DELAY)
+plot(cde_delay, xlab = "Precipitation", ylab = "Arrival time")
 
+cde_delay2 <- cde(FlightDelaysFinal01$Latitude, FlightDelaysFinal01$ARR_DELAY)
+plot(cde_delay2, xlab = "Latitude", ylab= "Arrival time")
+
+cde_delay2 <- cde(FlightDelaysFinal01$Longitude, FlightDelaysFinal01$ARR_DELAY)
+plot(cde_delay2, xlab = "Longitude", ylab= "Arrival time")
+
+cde_delay2 <- cde(as.numeric(FlightDelaysFinal01$CARRIER), FlightDelaysFinal01$ARR_DELAY, x.margin = 1:352)
+plot(cde_delay2, xlab = "Carrier", ylab= "Arrival time")
 
 ###################################fixed effects model###########
 library(foreign)
 library(gplots)
+library(plm)
 load("data/FlightDelays_Full.RData")
 sampledat <- sample_frac(FlightDelays_Full, .01)
 plotmeans(data = FlightDelays_Full, n.label = F, main = "Heterogeneity across carriers", ylab = "Arrival Delay", ARR_DELAY~ CARRIER)
-coplot(data = sampledat, ARR_DELAY~DEP_TIME_BLK|DAY_OF_WEEK)
+coplot(data = sampledat, ARR_DELAY~carrier_lg|CANCELLATION_CODE)
+Deptimes<- FlightDelays_Full[,c(1,2,3,4,5,6,7,8,20)]
+
+FlightDelaysFinal <- FlightDelays_Full
+FlightDelaysFinal[is.na(FlightDelaysFinal)] <- 0
+FlightDelaysFinal$Route <- as.factor(FlightDelaysFinal$Route)
+FlightDelaysFinal <- filter(FlightDelaysFinal, CANCELED == 0)
+FlightDelaysFinal<- select(FlightDelaysFinal, -FL_DATE, - FL_NUM, -DEP_DELAY, -DEP_DELAY_NEW, -DEP_DEL15, -DEP_DELAY_GROUP,  -TAXI_OUT, -WHEELS_OFF, -WHEELS_ON, -TAXI_IN, -ARR_TIME, -ARR_DELAY_NEW, -ARR_DEL15, -ARR_DELAY_GROUP,  -CANCELED, -CANCELLATION_CODE, -DIVERTED, -ACTUAL_ELAPSED_TIME, -CARRIER_DELAY, -WEATHER_DELAY, -NAS_DELAY, -SECURITY_DELAY, -LATE_AIRCRAFT_DELAY, -DEST_CITY, -DEST_STATE, -DEP_TIME,  -ID, -AIRPORT, -NAME, -DIST, -ID.DEST, -NAME.DEST, -DIST.DEST, -ORIGIN.DEST, -Dest_State, -Origin_State)
+levels(FlightDelaysFinal$carrier_lg) <- c(levels(FlightDelaysFinal$carrier_lg), "Unk")
+FlightDelaysFinal$carrier_lg[is.na(FlightDelaysFinal$carrier_lg)] <- "Unk"
+levels(FlightDelaysFinal$carrier_low) <- c(levels(FlightDelaysFinal$carrier_low), "Unk")
+FlightDelaysFinal$carrier_low[is.na(FlightDelaysFinal$carrier_low)] <- "Unk"
+AirportCoords <- read.csv("data/Airport_Coords.csv")
+names(AirportCoords)[1] = "ORIGIN"
+numflights <- read.csv("data/num_flights_airport.csv")
+names(numflights)[1] = "ORIGIN"
+numflights_by_lateDepartures <- merge(numflights, AirportCoords)
+FlightDelaysFinal <- merge(numflights_by_lateDepartures, FlightDelaysFinal)
+save(list = c("FlightDelaysFinal"), file = "data/FlightDelaysFinal.RData")
+
+plotmeans(data = FlightDelays_Full, ARR_DELAY~DEP_TIME_BLK, main = "Heterogeneity across time of day with 99.9% CI", n.label = F, p=.999, ci.label = T, digits = 3, barwidth = 2)
+pdata <-pdata.frame(FlightDelaysFinal, "CARRIER")
+fixed <- plm(data = FlightDelaysFinal, ARR_DELAY~DEP_TIME_BLK, index = c("CARRIER", "DAY_OF_WEEK"), model = "within")
+fixed1 <- lm(data = FlightDelays_Full, ARR_DELAY~DEP_TIME_BLK+DAY_OF_WEEK+QUARTER)
+summary(fixed1)
+
+
 anovaCarriers <- aov(ARR_DELAY~CARRIER, data = FlightDelaysFinal_01)
 plot(TukeyHSD(anovaCarriers))
 FlightDelaysFinal_01 <- sample_frac(FlightDelays_Final, .01)
+
+library(forecast)
+dat_ts <- ts(FlightDelaysFinal$ARR_DELAY, start = c(1,1,1))
+
+FlightDelaysFinal <- arrange(FlightDelaysFinal, YEAR, QUARTER,MONTH,DAY_OF_MONTH, CRS_DEP_TIME)
+save(list = c("FlightDelaysFinal"), file = "data/FlightDelaysFinalsorted.RData")
+
+FlightDelaysGrouped <- group_by(FlightDelaysFinal, YEAR, QUARTER, MONTH, DAY_OF_WEEK,DEP_TIME_BLK )
+FlightDelaysGrouped_summary <- summarise(FlightDelaysGrouped, MEAN_ARR_DELAY = mean(ARR_DELAY))
