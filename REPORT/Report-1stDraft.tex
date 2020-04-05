@@ -75,7 +75,7 @@
 	
 	\section{Distribution of Flight Delays}
 	
-	\tab A histogram of all arrival delays is shown in \underline{Fig 1}. Clearly, the data is strongly right-skewed. To correct the skewness, a cube-root transformation was performed, but subsequent Shapiro-Wilk test provided strong evidence against normality for this transformation, so it was abandoned. To heuristically assess dependence between covariates and response, we examined various conditional distributions.\\
+	\tab The dataset provided information on flights from 17 different carriers along 6,684 unique routes being flown between a combination of 362 airports in the United States (including Alaska and Hawaii and a couple airports in US territories such as Guam). 3,814,366 out of the 10,915,495 flights (~35\%) had some form of arrival delay. A histogram of all arrival delays is shown in \underline{Fig 4.1}. We observe that most "early" flights are not incredibly early compared to the frequency at which late flights can become "significantly" delayed, say more than 30 minutes. Clearly, the data is strongly right-skewed. To correct the skewness (to meet assumptions for our analysis), a cube-root transformation was performed, but subsequent Shapiro-Wilk tests provided strong evidence against normality for this transformation, so we turned to other methods, as will be discussed in chapter 5. To heuristically assess dependence between covariates and late arrivals, we examined various conditional distributions, as follows.\\
 	\begin{wrapfigure}{l}{0.45\textwidth}
 	\centering
 	 \includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
@@ -84,7 +84,7 @@
 	 
 		\subsection{Geographic Distribution of Flight Delays}
 		
-			\tab The distribution of flight delays across the geographic United States is shown in \underline{Fig 2}. As we can see, XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX, XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX. XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX. XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX.\\
+			\tab In \underline{Fig 4.21}, the routes that have various average intervals of delay time are shown. Note straight lines are drawn for simplicity; the actual flight most likely flew a non-linear path toward the destination. Also, early arrivals are given a delay time of 0 in the computation of the mean. We observe many things. Almost all routes have an average delay that is positive. This spotlights the nature of this project: to focus on remedying delays to improve customer satisfaction and increase airline revenue. For the routes with a mean delay between 30 and 45 minutes, most of the delays are clustered on the eastern US with most of the routes either beginning or ending in the San Francisco, New York, or southern Florida regions. For more severe delays of 45+ minutes, these routes encompass more cross-country flights. Furthermore, it can be seen that an airport in the northeast, most likely JFK in New York, is involved in a lot of severe flight delays. Next, in \underline{Fig 4.22}, the average delays at certain airports is depicted. We see further evidence that the more problematic delays are centered in bigger cities, particularly those on the east and west coast. \underline{Fig 4.23} illustrates the relationship between the popularity of an airport and the amount of delays. As expected, airports that crank out more flights have a higher average delay time. This raises the question: Does more flights simply give airports a higher probability of having delays (by random chance), or does an increase in flights also bring in other factors that \textit{cause} an increase in flight delays. In more broad terms, what factors correlate with delays, and which ones can be controlled by the airlines?\\
 			\begin{wrapfigure}{r}{0.45\textwidth}
 			\centering
 	 		\includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
@@ -93,7 +93,7 @@
 	 		
 		\subsection{Temporal Distribution of Flight Delays}
 		
-			\tab In \underline{Fig 3}, we demonstrate the distribution of flight delays by time of day, day of week, month, and quarter.  As we can see, XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX, XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX. XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX. XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX.
+			\tab \underline{Fig 4.31}, \underline{Fig 4.32}, \underline{Fig 4.33}, and \underline{Fig 4.34} display the distribution of flight delays for quarter, month, day of the week, and time of day, respectively. Note that because our data contained a year and a half’s worth of observations, the frequency of delays for, say quarter 1, are higher than other time periods that were not recorded twice. The histograms appear roughly symmetric with a slight right-skew. Specifically, early arrivals appear to follow a normal distribution while it transitions to an exponential distribution once delays become positive. We will explore this specific observation in the first section of our next chapter. Regardless, the distributions across these time factors do not change significantly. This produces an initial assumption that time of the flight is independent of delay time. To further investigate this hypothesis, we conduct \textit{John talk about coplots and stuff here}. \\
 			\begin{wrapfigure}{l}{0.45\textwidth}
 			\centering
 	 		\includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
@@ -102,7 +102,7 @@
 	 		
 		\subsection{Weather-based Distribution of Flight Delays}
 		
-			\tab Our weather data provided us primarily with data on precipitation and temperature. Other events, such as heavy fog and ice, were observed, but sparse. We show scatterplots of flight delays by precipitation and temperature in \underline{Fig 4}. In \underline{Fig 5}, histograms of flight delays for some unusual weather events are given. XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX, XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX. XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX. XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX.
+			\tab This most obvious factor that most likely affects flight delays is the weather. Therefore, we analyzed the conditional distributions of flight delays given average temperature, precipitation, and the presence of various rare weather events. These are described in \underline{Fig 4.41}, \underline{Fig 4.42}, and \underline{Fig 4.43}, respectively. In the scatterplot depicting rain, we see a lack of evidence that more extreme temperatures correlate with increased delays. This would be evident if the scatterplot showed a parabolic pattern, which is not seen. Surprisingly, we see the same idea in the scatterplot of precipitation. Contrary to intuition, as the amount of precipitation increase, there is no visual subsequent increase in the delay time. Lastly, \underline{Fig 4.43} demonstrates that some dangerous weather events have a slightly bigger effect on delay times than others. For example, the distributions of “ice, sleet and hail” and “blowing or drifting snow” have more area in their right-tails. This is indicative of more occurrences where these events caused more significant delays. Besides these difference in tail-density, the overall shape remains very similar. \\
 			\begin{figure}[h]
 	 		\includegraphics[width = .75 \textwidth]{../figures/LateArrivalsHistogram}
 	 		\caption{Fig 4 - scatterplots of ARR DELAY by precipitation and temperature}
@@ -113,7 +113,7 @@
 	 		\end{figure}
 		\subsection{Carrier-based Distribution of Flight Delays}
 			
-			\tab For each of the 19 carriers, flight delays was plotted. Histograms for each are given in \underline{Fig 6}. We also hypothesized that there might also be differences in flight delays between different carriers. A one-way ANOVA was conducted, and p-values corrected using Tukey's HSD, shown in \underline{Fig 7}.
+			\tab Next, looking at delays by carrier would provide us with insight as to whether some carriers are better at mitigating delays. \underline{Fig 4.5} shows us that the distribution across carriers stays roughly the same. Apart from the differences in frequencies (with some airlines being more popular or providing more flight routes), the shape of the distribution is basically homogenous, especially when compared to the other conditional distributions of other factors. This means that delays across carriers \textit{behave} in the same manner. To analyze if the average delay time (as opposed to distribution) differs across airlines, we conducted ANOVA (analysis of variance). Specifically, we used Tukey’s HSD to make multiple comparisons across each combination of carriers to see what carriers differed from one another. A plot of the resultant 95\% confidence intervals for the mean difference between airport delays is show in \underline{Fig 4.6}. We see that the majority of the intervals constructed do not fall within 0. Thus for those that didn’t, we conclude that they do indeed have a difference in mean arrival delays. All in all, we observe that the \textit{distribution} across carriers is similar, but the \textit{quantitative amount of delays} across carriers is different. \\
 			\begin{figure}[h]
 	 		\includegraphics[width = 1 \textwidth]{../figures/LateArrivalsHistogram}
 	 		\caption{Fig 6 - Histograms for the airlines}
@@ -125,14 +125,21 @@
 
 		\subsection{Airport-based Distribution of Flight Delays}
 			
-			\tab We were also interesting in detecting if individual airports showed differences in flight delays, shown in \underline{Fig 8}. 
+			\tab \underline{Fig 4.7} displays the histograms of delays for some of the most popular airports. As has been the trend thus far, the distribution across the airports does not change much save for the changes in frequency. Thus, we can conclude the behavior and process of flight delays is pretty universal and can be modeled with an explicitly defined distribution, as we will dive into in the next chapter. \\ 
 			\begin{figure}[h]
 	 		\includegraphics[width = 1 \textwidth]{../figures/LateArrivalsHistogram}
 	 		\caption{Fig 8 - Airport histograms}
 	 		\end{figure}
+
+		\subsection{Making Up Lost Time En Route}
+			\tab One last thing we wanted to explore was the ability for pilots to make up lost time as a result of a departure delay. We presumed that a longer flight, distance-wise, would allow for more opportunity for a flight delay to be alleviated. In the air, harnessing favorable air currents or taking shortcuts can remedy the lost time they left the ground with. Surely, in \underline{Fig 4.8}, we see that flights over a longer distance have, on average, less arrival delays. Similarly, the shorter the flight, the more severe the arrival delay is. These observations support our hypothesis stated above. Of course, correlation does not imply causation, so more substantive knowledge on how pilots navigate the flight route would provide more clarification on this. \\
+			\begin{figure}[h]
+	 		\includegraphics[width = 1 \textwidth]{../figures/LateArrivalsHistogram}
+	 		\caption{Fig 4.8 - blah ablh}
+	 		\end{figure}
 	 		
-\chapter{Model formulation and assessment}
-	\section{Constructing a parametric distribution for delays}
+\chapter{Model Formulation and Assessment}
+	\section{Constructing a Parametric Distribution for Delays}
 	 \tab We were interested in deducing the marginal distribution of arrival times from the data. Although it would have been relatively facile to estimate a valid empirical distribution, we decided that a parametric distribution would be more useful and intuitive. By establishing a set of parameters, further work could be directed towards estimating parameters under certain combinations of covariate values. With mostly categorical data, it then becomes feasible to estimate parameters for certain combinations of interesting variables. Parameterization also allows the density functions of the distribution to be readily expressed analytically.\\
 	\tab As seen in \underline{Fig 1}, the marginal distribution is strongly right skewed, and thus our first plan of action was to attempt a transformation to correct the skewness. A number of transformations were considered. With negative values in the data, log or square root transformations could only be applied by first shifting the data to be strictly positive. One way to do this would be to simply add the smallest (most negative) number to each of our delay times; however, it was decided that this approach rendered our results somewhat uninterpretable. Consider, for example, a new observation where the flight arrived earlier (with a flight delay time more negative) than any other flight in the dataset. Such an observation would not be supported in a distribution of log-transformed values. We also briefly considered cube root transformation, but as seen in \underline{Fig 9}, it does not result in normality or resemblance to any familiar parametric distribution. In lieu of transforming the data, we considered several well-known skewed distributions, but none of them fit well or appeared sensible.\\
 			\begin{wrapfigure}{l}{0.35\textwidth}
@@ -163,7 +170,7 @@
 	 		\includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
 	 		\caption{Fig 12  - Comparison of several key conditional density estimates with our theoretical distribution}
 	 		\end{wrapfigure}
-	\section{Linear model using OLS}
+	\section{Linear Model Using OLS}
 	\tab Ideally, when constructing a linear model using OLS estimates, we want to satisfy four principal assumptions; namely, a linear relationship between predictors and response, independence of errors, homoscedasticity, and normality of the errors. However, having seen that the conditional distributions of the response are strongly \textit{non-normal}, and that there exists no simple transformation to restore normality, the fourth assumption appears to be violated. It is important now, to remember that, in fact, the Gauss-Markov theorem does \textit{not} require normality of the errors for the OLS estimates to be the best linear unbiased estimator, and that normally distributed errors are required only for conducting inference on the model via the t-distribution. For merely constructing a model equation and generating predictions that minimize mean squared error, normality of the errors is not strictly required. Further, inference on the model parameters can still be conducted through a variety of alternate methods. Most commonly, M-estimation is used to fit heavy-tailed data. With a model given by \begin{center}
 	$$Y = X\beta + e$$
 	and residuals given by
@@ -172,10 +179,14 @@
 	$$f(\hat{\beta}) = \sum \rho (y_i - x_i^T\hat{\beta})$$
 	\end{center}
 	where $\rho$ is a function of the error such that $\rho(e) \geq 0$, $\rho(0) = 0$, $\rho(e) = \rho(-e)$, and monotone on its absolute value, e.g. $\rho(e_i) \geq \rho(e_{i-1}$ Having determined a general form for the conditional distribution of the response, we have several ways to bypass this we proceeded to fit a generalized linear model to our data, where 
-	\section{Logistic regression}
-	\tab Another approach we wanted to try was to predict whether or not a flight would be delayed, regardless of time. To do this we did a logistic regression. Here are plots. Here are the problems. Here is how we tried to fix it. Here is how we failed.
+	\section{Logistic Regression}
+	\tab The majority of the models in data science can be put into three bins: regression, classification, and clustering. As we came to realize that our linear regression model was not useful enough, we turned to a classification method. In particular, we chose binary logistic regression to predict whether or not a flight would be delayed or not given certain pre-departure covariates. In retrospect, our motivation for pursuing logistic regression was two-fold. For one, we wanted to improve on the accuracy of our predictive model, so by moving away from regressing on a continuous variable, we shifted our focus to predicting a binary success or failure. Secondly, our conditional density estimates illustrate that given certain covariate levels, the shape of our distribution changes more than the mean (location) of our distribution. Thus, regressing on the parameter p from our Bernoulli random variable from our mixed distribution would help us explain these observed changes in our conditional density estimates. The marginal distribution of U in our model changes how thick-tailed our distributions become on either side of 0. 
+	\tab Using the \textit{glm()} function in R, we fit a generalized linear model using the logit function as the link function and the binomial distribution family as the probability distribution. A 5\% subset of our data frame was taken to shorten computation time. Even more, 80\% of our data was allotted for training and 20\% for testing. The summary of our fit model is show in \underline{Fig X.X}. Our covariates included various factors on the time as well as weather phenomena in the departure and arrival airport. We interpret our logistic regression output in two separate ways for numerical and categorical data. For numerical data, the specific factor level’s coefficient can be interpreted as the change in the log-odds of the “success” occurring – in our case a delay. Exponentiating these values gives you a more interpretable estimate. For example, from our model output, we can say that for every additional millimeter of snow, the odds of a delay occurring (versus not occurring) increases by a factor of $e^{0.1283}$ = 1.013. For categorial data, the interpretation is a little different. We illustrate by example. In our case, flying in April as opposed to January lowers one’s chances of having a flight delayed by a factor of $e^{-0.2646}$ = 0.767. Furthermore, we see that the majority of our coefficients are statistically significant as indicated by the asterisks next to each line. These significant predictors are thus being utilized in our model, as desired. 
+	\tab Since our logistic regression model outputted a \textit{probability} that a delay will occur, we needed to determine the optimal probability threshold to determine whether or not a delay will take place. We thus improved our model by plotting an ROC curve, or a “Receiver Operating Characteristics” curve (\underline{Fig X.X}. By maximizing the area under the curve, we are able to increase our accuracy. The y-axis gives the true positive rate while the x-axis gives 1 minus the true negative rate. Thus, by altering the probability threshold, we can then predict with better accuracy. Using this ROC curve and various functions, we found that the optimal probability threshold was 0.39. This means that any predictions that output the probability of a delay as being over 0.39, we say that a delay will occur. 
+	\tab Finally, after validating our model on the testing data, we generated a confusion matrix and other measures of performance as shown in \underline{Fig X.X}. Our accuracy was 67.62\% where out of our testing set of 92,667 observations, it correctly predicted 62,187 of them. Observe from the confusion matrix that we have significantly more false positives than false negatives. Thus, we interpret this as our model is more on the pessimistic side and is more likely to forecast a delay when in reality there is not one. 
+
 		
-	\section{Dynamic linear model}
+	\section{Time-Based Model: Dynamic Regression Model}
 	\tab From our exploratory data analysis, we noted that several different categorical variables related to time showed significant effects on the mean arrival time. We thought the data might have an underlying time series, so our approach here was to construct a time series and then perform regression on the residuals. 
 
 	\tab Last but not least, we   From our data exploration, we see that for major covariates, we do not see a change in the general shape of the distribution itself, only small changes in the parameters. Based on this, we make the simplifying assumption that the conditional distribution is identical and independent across all combinations of factor levels, keeping in mind the limitations of this approach.  Furthermore, simplified model, use p instead of location parameter, show moments, describe strategy for producing conditional distributions of response based on 1st, 2nd, 3rd moments from data. Give equations. If the fixed effect model worked, then we would have fit that model and then fit a linear regression on the residuals to try to capture all effects. \\
@@ -184,17 +195,17 @@
 \chapter{Forecasting Flight Delays for 2019 Q3}
 	\section{Challenges}
 	\tab Predicting flight delays can be challenging particularly because it is a subject that has already been investigated no doubt thoroughly by data scientists under the employ of the airline companies themselves. Many influential observations are the result of extreme values that happen rarely, while most observations are not so extreme. Black swan stuff, disparity in sample sizes, difficulty of incorporating models that can accurately predict rare, but highly impactful events (e.g. blizzards, tornadoes)
-	\section{Using our forecast model}
+	\section{Using our Forecast Model}
 	\tab Using our regression  model we predict  such and such requiring the following list of covariates. Based on time series data we have the following.
 \chapter{Business Recommendations}
-	\section{Differences between carriers}
+	\section{Differences Between Carriers}
 	\tab Look at our ANOVA. Some of you guys suck.
-	\section{Important variables to keep an eye on}
+	\section{Important Variables to Keep an Eye On}
 	\tab The following variables are important to note. Some of these variables are not under control. Some variables are under control. What to do in each case. Some variables that may seem to be important but are not.
 \chapter{Closing Thoughts}
 	\section{Retrospect}
 	\tab we should've done this, should've used google cloud, should've clearly segmented the workflow and not gotten ahead. Alternative distributions, e.g. starting at flight takeoff and adjusted for distance
-	\section{Improving future analyses}
+	\section{Improving Future Analyses}
 	\tab Our cool distribution, with calculated moments, use it for good. 
 \chapter{Appendix}
 	\section{References}
