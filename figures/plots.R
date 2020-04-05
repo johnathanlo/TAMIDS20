@@ -2,7 +2,7 @@ require(ggplot2)
 require(gridExtra)
 
 #### Histogram of All Arrival Delays
-gg_late_arrival = ggplot(data=FlightDelays) + geom_histogram(aes(x=ARR_DELAY), bins=100, col="darkblue", fill="lightblue") + xlim(-25,300) + geom_vline(aes(xintercept=mean(ARR_DELAY)), color="blue", linetype="dashed", size=1) + labs(x="Arrival Delay (minutes)", y="Count", title="Histogram of Arrival Delays")
+gg_late_arrival = ggplot(data=FlightDelays_Final) + geom_histogram(aes(x=ARR_DELAY), bins=100, col="darkblue", fill="lightblue") + xlim(-75,300) + geom_vline(aes(xintercept=mean(ARR_DELAY)), color="blue", linetype="dashed", size=1) + labs(x="Arrival Delay (minutes)", y="Count", title="Histogram of Arrival Delays")
 plot(gg_late_arrival)
 
 
@@ -53,3 +53,9 @@ hist(WT09$ARR_DELAY, breaks=1000, xlim =c(-200,200), main = "Histogram of Blowin
 hist(WT10$ARR_DELAY, breaks=500, xlim =c(-200,200), main = "Histogram of Tornado or Water Spout", xlab="Arrival Delay (minutes)", ylab="Frequency")
 # WT11
 hist(WT11$ARR_DELAY, breaks=500, xlim =c(-200,200), main = "Histogram of High or Damaging Winds", xlab="Arrival Delay (minutes)", ylab="Frequency")
+
+
+#####################################
+## how far destination cities are from a given originating airport. This is of importance as longer the flight, airlines can make up time in the air.
+subset = sample_n(FlightDelays_Final, 200000)
+plot(subset$DISTANCE ~ subset$ARR_DELAY, xlab="Arrival Delay (minutes)", ylab= "Distance", main = "Scatterplot of Distance vs. Arrival Delay", col="blue")
