@@ -58,6 +58,27 @@ g2 <- autoplot(forecast_hourly) +
   coord_cartesian(xlim = c(540, 560), ylim = c(-15, 20))
 plot(g2)
 
+########################FlightDelaysBootstrap
+
+
+hourly_delay_bootstrap = ts(FlightDelaysBootstrap$ARR_DELAY, deltat = 1/19)
+autoplot(hourly_delay_ts)
+decompose(hourly_delay_ts)
+plot(decompose(hourly_delay_ts))
+
+arima_fit_hourly = auto.arima(hourly_delay_ts, D=1)
+summary(arima_fit_hourly)
+
+#findfrequency(daily_delay_ts)
+forecast_hourly = forecast(arima_fit_hourly, h=1596)
+plot(forecast_hourly[])
+
+g2 <- autoplot(forecast_hourly) + 
+  ggtitle("Hourly forecast") + 
+  ylab("y") +
+  coord_cartesian(xlim = c(545, 640))
+plot(g2)
+
 
 
 ## TIME SERIES FOR MEDIAN WEEKLY DELAY
