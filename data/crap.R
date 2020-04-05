@@ -524,6 +524,11 @@ save(list = c("FlightDelaysGrouped", "FlightDelaysGrouped_summary"), file = "dat
 groupnums <- tally(FlightDelaysGrouped)
 FlightDelaysBootstrap <- sample_n(FlightDelaysGrouped, 1)
 
-for(i in 1:1499){
+for(i in 1:100){
   FlightDelaysBootstrap <- rbind(FlightDelaysBootstrap, sample_n(FlightDelaysGrouped, 1))
 }
+save(list = c("FlightDelaysBootstrap"), file = "data/FlightDelaysBootstrap.RData")
+########################graphs for different p
+
+bernvec <- rbinom(n,1,par[1])
+modelvec <- bernvec*rexp(n,par[4]) + (1-bernvec)*rnorm(n,par[2], par[3])
