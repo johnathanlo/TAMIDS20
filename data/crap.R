@@ -454,11 +454,18 @@ test.SST <- sum((FlightDelays_RF$ARR_DELAY[1:1000]-test.mean)^2)
 test.SSR <- sum((test-test.mean)^2)
 test.SSE <- sum((FlightDelays_RF$ARR_DELAY[1:1000]-test)^2)
 test.Rsq <- test.SSR/test.SST
+########CDE#############
+library(hdrcde)
+cde_delay <- cde(FlightDelaysFinal_01$ORIGIN, FlightDelaysFinal_01$ARR_DELAY)
+
 
 ###################################fixed effects model###########
 library(foreign)
 library(gplots)
-plotmeans(data = FlightDelays_Final, n.label = F, main = "Heterogeneity across carriers", ylab = "Arrival Delay", ARR_DELAY~ CARRIER)
+load("data/FlightDelays_Full.RData")
+sampledat <- sample_frac(FlightDelays_Full, .01)
+plotmeans(data = FlightDelays_Full, n.label = F, main = "Heterogeneity across carriers", ylab = "Arrival Delay", ARR_DELAY~ CARRIER)
+coplot(data = sampledat, ARR_DELAY~DEP_TIME_BLK|DAY_OF_WEEK)
 anovaCarriers <- aov(ARR_DELAY~CARRIER, data = FlightDelaysFinal_01)
 plot(TukeyHSD(anovaCarriers))
 FlightDelaysFinal_01 <- sample_frac(FlightDelays_Final, .01)
