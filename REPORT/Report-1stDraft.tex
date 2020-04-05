@@ -131,7 +131,7 @@
 	 		\caption{Fig 8 - Airport histograms}
 	 		\end{figure}
 	 		
-\chapter{Model formulation}
+\chapter{Model formulation and assessment}
 	\section{Constructing a parametric distribution for delays}
 	 \tab We were interested in deducing the marginal distribution of arrival times from the data. Although it would have been relatively facile to estimate a valid empirical distribution, we decided that a parametric distribution would be more useful and intuitive. By establishing a set of parameters, further work could be directed towards estimating parameters under certain combinations of covariate values. With mostly categorical data, it then becomes feasible to estimate parameters for certain combinations of interesting variables. Parameterization also allows the density functions of the distribution to be readily expressed analytically.\\
 	\tab As seen in \underline{Fig 1}, the marginal distribution is strongly right skewed, and thus our first plan of action was to attempt a transformation to correct the skewness. A number of transformations were considered. With negative values in the data, log or square root transformations could only be applied by first shifting the data to be strictly positive. One way to do this would be to simply add the smallest (most negative) number to each of our delay times; however, it was decided that this approach rendered our results somewhat uninterpretable. Consider, for example, a new observation where the flight arrived earlier (with a flight delay time more negative) than any other flight in the dataset. Such an observation would not be supported in a distribution of log-transformed values. We also briefly considered cube root transformation, but as seen in \underline{Fig 9}, it does not result in normality or resemblance to any familiar parametric distribution. In lieu of transforming the data, we considered several well-known skewed distributions, but none of them fit well or appeared sensible.\\
@@ -153,13 +153,30 @@
 	 		\caption{Fig 11  - QQ plot of of data vs theoretical distribution}
 	 		\end{wrapfigure}
 	\tab An additional approach to validating this distribution would be through conditional density estimation.\\
-	\tab From our data exploration, we see that for major covariates, we do not see a change in the general shape of the distribution itself, only small changes in the parameters. Based on this, we make the simplifying assumption that the conditional distribution is identical and independent. 
+	\section{Logistic regression}
+	\tab Another approach we wanted to try was to predict whether or not a flight would be delayed, regardless of time. To do this we did a logistic regression. Here are plots. Here are the problems. Here is how we tried to fix it. Here is how we failed.
+	\section{Time series}
+	\tab From our exploratory data analysis, we noted that several different categorical variables related to time showed significant effects on the mean arrival time. We thought the data might have an underlying time series, so our approach here was to construct a time series and then perform regression on the residuals. 
 	
-\chapter{Model selection}
+	\section{Linear Regression}
+	\tab From our data exploration, we see that for major covariates, we do not see a change in the general shape of the distribution itself, only small changes in the parameters. Based on this, we make the simplifying assumption that the conditional distribution is identical and independent across all combinations of factor levels, keeping in mind the limitations of this approach.  Furthermore, simplified model, use p instead of location parameter, show moments, describe strategy for producing conditional distributions of response based on 1st, 2nd, 3rd moments from data. Give equations. If the fixed effect model worked, then we would have fit that model and then fit a linear regression on the residuals to try to capture all effects. \\
+	
 
 \chapter{Forecasting Flight Delays for 2019 Q3}
+	\section{Challenges}
+	\tab Predicting flight delays can be challenging particularly because it is a subject that has already been investigated no doubt thoroughly by data scientists under the employ of the airline companies themselves. Many influential observations are the result of extreme values that happen rarely, while most observations are not so extreme. Black swan stuff, disparity in sample sizes, difficulty of incorporating models that can accurately predict rare, but highly impactful events (e.g. blizzards, tornadoes)
+	\section{Using our forecast model}
+	\tab Using our regression  model we predict  such and such requiring the following list of covariates. Based on time series data we have the following.
 \chapter{Business Recommendations}
+	\section{Differences between carriers}
+	\tab Look at our ANOVA. Some of you guys suck.
+	\section{Important variables to keep an eye on}
+	\tab The following variables are important to note. Some of these variables are not under control. Some variables are under control. What to do in each case. Some variables that may seem to be important but are not.
 \chapter{Closing Thoughts}
+	\section{Retrospect}
+	\tab we should've done this, should've used google cloud, should've clearly segmented the workflow and not gotten ahead
+	\section{Improving future analyses}
+	\tab Our cool distribution, with calculated moments, use it for good. 
 \chapter{Appendix}
 	\section{References}
 	\section{Additional Figures, Tables, Code, and Data}
