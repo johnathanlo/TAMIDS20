@@ -506,12 +506,29 @@ summary(fixed1)
 anovaCarriers <- aov(ARR_DELAY~CARRIER, data = FlightDelaysFinal_01)
 plot(TukeyHSD(anovaCarriers))
 FlightDelaysFinal_01 <- sample_frac(FlightDelays_Final, .01)
-
+############bootstrapping the time series################
 library(forecast)
 dat_ts <- ts(FlightDelaysFinal$ARR_DELAY, start = c(1,1,1))
 
 FlightDelaysFinal <- arrange(FlightDelaysFinal, YEAR, QUARTER,MONTH,DAY_OF_MONTH, CRS_DEP_TIME)
 save(list = c("FlightDelaysFinal"), file = "data/FlightDelaysFinalsorted.RData")
+#####get rid of extreme observations####
+FlightDelaysFinal_99 <- filter(FlightDelaysFinal, ARR_DELAY<192)
+save(list = c("FlightDelaysFinal_99"), file = "data/FlightDelaysFinal_99.RData" )
+##########################
 
-FlightDelaysGrouped <- group_by(FlightDelaysFinal, YEAR, QUARTER, MONTH, DAY_OF_WEEK,DEP_TIME_BLK )
+FlightDelaysGrouped <- group_by(FlightDelaysFinal_99, QUARTER, MONTH, DAY_OF_MONTH, DEP_TIME_BLK )
 FlightDelaysGrouped_summary <- summarise(FlightDelaysGrouped, MEAN_ARR_DELAY = mean(ARR_DELAY))
+save(list = c("FlightDelaysGrouped", "FlightDelaysGrouped_summary"), file = "data/FlightDelaysTimeSeries.RData")
+
+groupnums <- tally(FlightDelaysGrouped)
+FlightDelaysBootstrap <- sample_n(FlightDelaysGrouped, 1)
+
+for(i in 1:100){
+  FlightDelaysBootstrap <- rbind(FlightDelaysBootstrap, sample_n(FlightDelaysGrouped, 1))
+}
+save(list = c("FlightDelaysBootstrap"), file = "data/FlightDelaysBootstrap.RData")
+########################graphs for different p
+
+bernvec <- rbinom(n,1,par[1])
+modelvec <- bernvec*rexp(n,par[4]) + (1-bernvec)*rnorm(n,par[2], par[3])
