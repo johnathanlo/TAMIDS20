@@ -127,8 +127,8 @@ MLE <- optim(c(.5, -10, 5, 1/24), loglikDelays, x= FlightDelays05$ARR_DELAY)
 ###get fisher information matrix
 
 MLEnew <- MLE$par
-bernvec <- rbinom(100000,1,.2052)
-modelvec <- bernvec*rexp(100000,.0164) + (1-bernvec)*rnorm(100000,-9.005, 11.444)
+bernvec <- rbinom(106142,1,.20838991)
+modelvec <- bernvec*rexp(106142,.01624156) + (1-bernvec)*rnorm(106142,-9.12798578, 11.67619802)
 par(mfrow = c(2,1))
 hist(modelvec, breaks = 100)
 hist(FlightDelays05$ARR_DELAY[FlightDelays05$ARR_DELAY<600], breaks = 100)
@@ -355,7 +355,7 @@ FlightDelays_sumDelays <- summarise(FlightDelays_Full_byAirline, FLIGHT_COUNT = 
 FlightDelays_sumDelays$AVG_DELAY <- FlightDelays_sumDelays$DELAY_SUM/FlightDelays_sumDelays$FLIGHT_COUNT
 plot_sumDelays <- ggplot(data = FlightDelays_sumDelays[FlightDelays_sumDelays$QUARTER==1 && FlightDelays_sumDelays$YEAR==2018,], aes(x = CARRIER, y = AVG_DELAY))+ geom_point(stat = "identity")
 ANOVA1 <-aov(data = FlightDelays_sumDelays, AVG_DELAY~CARRIER)
-ANOVA2 <- aov(data = FlightDelays_Full, ARR_DELAY~CARRIER)
+ANOVA2 <- aov(data = FlightDelaysFinal_01, ARR_DELAY~CARRIER)
 summary(ANOVA1)
 summary(ANOVA2)
 plot(TukeyHSD(ANOVA1))
@@ -454,3 +454,11 @@ test.SST <- sum((FlightDelays_RF$ARR_DELAY[1:1000]-test.mean)^2)
 test.SSR <- sum((test-test.mean)^2)
 test.SSE <- sum((FlightDelays_RF$ARR_DELAY[1:1000]-test)^2)
 test.Rsq <- test.SSR/test.SST
+
+###################################fixed effects model###########
+library(foreign)
+library(gplots)
+plotmeans(data = FlightDelays_Final, n.label = F, main = "Heterogeneity across carriers", ylab = "Arrival Delay", ARR_DELAY~ CARRIER)
+anovaCarriers <- aov(ARR_DELAY~CARRIER, data = FlightDelaysFinal_01)
+plot(TukeyHSD(anovaCarriers))
+FlightDelaysFinal_01 <- sample_frac(FlightDelays_Final, .01)
