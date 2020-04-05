@@ -22,8 +22,8 @@ Flight_Delays$ARR_DELAY_GROUP <- as.factor(Flight_Delays$ARR_DELAY_GROUP)
 Flight_Delays$DIVERTED <- as.factor(Flight_Delays$DIVERTED)
 
 #Run only if doing modeling of if a delay will occur 
-#Flight_Delays$ARR_DELAY_NEW = ifelse(Flight_Delays$ARR_DELAY_NEW > 1, 1, Flight_Delays$ARR_DELAY_NEW) 
-#Flight_Delays$ARR_DELAY_NEW = as.factor(Flight_Delays$ARR_DELAY_NEW)
+Flight_Delays$ARR_DELAY_NEW = ifelse(Flight_Delays$ARR_DELAY_NEW > 1, 1, Flight_Delays$ARR_DELAY_NEW) 
+Flight_Delays$ARR_DELAY_NEW = as.factor(Flight_Delays$ARR_DELAY_NEW)
 
 set.seed(Sys.time())
 subset = sample_frac(Flight_Delays, size=0.05)
@@ -243,7 +243,7 @@ middle90 = filter(FlightDelays05_withWeather, ARR_DELAY > -26 && ARR_DELAY < 74)
 
 set.seed(Sys.time())
 weather_training = sample_frac(FlightDelays05_withWeather, 0.8)
-weather_logistic = glm(ARR_DEL15 ~ YEAR + QUARTER + MONTH+ DISTANCE +  CRS_DEP_TIME + CRS_ARR_TIME + prcp+snow+tavg+tmax+tmin+wt01+wt02+wt03+wt04+wt05+wt06+wt07+wt08+wt09+wt10+wt01.DEST+wt02.DEST+wt03.DEST+wt04.DEST+wt05.DEST+wt06.DEST+wt07.DEST+wt08.DEST+wt09.DEST+wt10.DEST+wt11.DEST, data= weather_training, family = "binomial") ##wt11 problematic
+weather_logistic = glm(ARR_DELAY_NEW ~ YEAR + QUARTER + MONTH+ DISTANCE +  CRS_DEP_TIME + CRS_ARR_TIME + prcp+snow+tavg+tmax+tmin+wt01+wt02+wt03+wt04+wt05+wt06+wt07+wt08+wt09+wt10+wt01.DEST+wt02.DEST+wt03.DEST+wt04.DEST+wt05.DEST+wt06.DEST+wt07.DEST+wt08.DEST+wt09.DEST+wt10.DEST+wt11.DEST, data= weather_training, family = "binomial") ##wt11 problematic
 
 summary(weather_logistic)
 step_selection = step(weather_logistic, scope=list(upper=~., lower=~1), k=2, direction = "forward") 
@@ -270,13 +270,13 @@ prediction_weather <- predict(weather_logistic, newdata = weather_testing, type 
 
 #### ROC To Determine Threshold
 require(pROC)
-roc_log_weather = roc(weather_testing$ARR_DEL15, prediction_weather)
-plot(roc_log_weather, legacy.axes = TRUE, col=2, main="ROC Curve - Logistic Regression (Weather)")
+roc_log_weather = roc(weather_testing$ARR_DELAY, prediction_weather)
+plot(roc_log_weather, legacy.axes = TRUE, col=2, main="ROC Curve - Logistic Regression")
 threshold_weather = coords(roc_log_weather, "best", "threshold")
 print(paste("Probability Threshold: " ,threshold_weather$threshold))
 
 ## Confusion Matrix Using Threshold
-confusionMatrix(data = as.factor(as.numeric(prediction_weather>threshold_weather$threshold)), reference = weather_testing$ARR_DEL15)
+confusionMatrix(data = as.factor(as.numeric(prediction_weather>threshold_weather$threshold)), reference = weather_testing$ARR_DELAY)
 
 
 ############################################
@@ -346,12 +346,15 @@ prediction_weather_full <- predict(weather_logistic_full, newdata = weather_test
 #### ROC To Determine Threshold
 require(pROC)
 roc_log_weather_full = roc(weather_testing_full$ARR_DEL15, prediction_weather_full)
-plot(roc_log_weather_full, legacy.axes = TRUE, col=2, main="ROC Curve - Logistic Regression (Weather & Airfare)")
+plot(roc_log_weather_full, legacy.axes = TRUE, col=2, main="ROC Curve - Logistic Regression")
 threshold_weather_full = coords(roc_log_weather_full, "best", "threshold")
 print(paste("Probability Threshold: " ,threshold_weather_full$threshold))
 
 ## Confusion Matrix Using Threshold
 confusionMatrix(data = as.factor(as.numeric(prediction_weather_full>threshold_weather_full$threshold)), reference = weather_testing_full$ARR_DEL15)
+
+
+
 
 ## KNN
 knn_data = select(FlightDelays_Full, ARR_DELAY, prcp:lf_ms)
