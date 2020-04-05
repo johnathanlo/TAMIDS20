@@ -153,24 +153,27 @@ ggplot(exp_test) + geom_point(aes(x=index, y=theoretical, color='blue')) + geom_
 
 #############plot against our mixture distribution
 
-subset = na.omit(FlightDelays05)
+subset = na.omit(FlightDelaysFinal_01)
 Sdata = matrix(subset, nrow(subset))
 
 n = nrow(subset)
 
 bernvec <- rbinom(100000,1,.2052)
 modelvec <- bernvec*rexp(100000,.0164) + (1-bernvec)*rnorm(100000,-9.005, 11.444)
+modelvec <- sort(modelvec)
 nqmix = rep(0,n)
 for(i in c(1:n)){
   nqmix[i] = quantile(modelvec, probs = (i-.5)/n)
 }
-# sort data from smallest to largest
-xsort = sample(sort(FlightDelays05$ARR_DELAY), 484303)
+percentile <- ecdf(nqmix)
 
+# sort data from smallest to largest
+xsort = sort(FlightDelaysFinal_01$ARR_DELAY)
+xnew <- percentile(xsort)
 # Make QQplot
-plot(nqmix,xsort,type='p',main="QQplot - Delays vs. Exponential(lambda estimate)",xlab="t-quantiles",
-     ylab="quantiles of data",lwd=2)
-lines(nqmix,nqmix,lwd=2,col="blue")
+plot(percentile(nqmix),xnew,type='p',main="QQplot of data vs theoretical mixture distribution",xlab="mixture quantiles",
+     ylab="data quantiles",lwd=2)
+lines(percentile(nqmix),percentile(nqmix),lwd=2,col="blue")
 
 #Plot distribution of ARR_DELAY_NEW and the exponential distribution estimated to model it
 sorted = as.vector(sort(rexp(nrow(subset), lambda_est), decreasing=T))
