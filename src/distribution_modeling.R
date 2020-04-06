@@ -400,3 +400,12 @@ plot(sim_knn_mod)
 sim_knn_mod$bestTune
 sim_knn_mod$finalModel
 str(sim_knn_mod)
+
+
+######
+require(biglm)
+FlightDelaysFinal_99 = select(FlightDelaysFinal_99, -Route)
+lm_subset = sample_n(FlightDelaysFinal_99, 100000)
+lm = lm(ARR_DELAY ~ ORIGIN + Num_Flights+Latitude+Longitude+DEST+YEAR+QUARTER+MONTH+DAY_OF_MONTH+DAY_OF_WEEK+CARRIER+CRS_DEP_TIME+DEP_TIME_BLK+CRS_ARR_TIME+ARR_TIME_BLK+CRS_ELAPSED_TIME+AIR_TIME+DISTANCE+PASSENGERS+EMPFULL+EMPPART+EMPTOTAL+EMPFTE+NET_INCOME+OP_REVENUES+prcp+snow+tavg+tmax+tmin+wt01+wt02+wt03+wt04+wt05+wt06+wt07+wt08+wt09+wt10+wt11+prcp.DEST+snow.DEST+tavg.DEST+tmax.DEST+tmin.DEST+wt01.DEST+wt02.DEST+wt03.DEST+wt04.DEST+wt05.DEST+wt06.DEST+wt07.DEST+wt08.DEST+wt09.DEST+wt10.DEST+wt11.DEST+nsmiles+fare+carrier_lg+large_ms+fare_lg+carrier_low+lf_ms+fare_low, data = lm_subset)
+
+summary(lm)
