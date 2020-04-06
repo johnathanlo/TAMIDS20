@@ -404,8 +404,17 @@ str(sim_knn_mod)
 
 ######
 require(biglm)
-FlightDelaysFinal_99 = select(FlightDelaysFinal_99, -Route)
-lm_subset = sample_n(FlightDelaysFinal_99, 100000)
-lm = lm(ARR_DELAY ~ ORIGIN + Num_Flights+Latitude+Longitude+DEST+YEAR+QUARTER+MONTH+DAY_OF_MONTH+DAY_OF_WEEK+CARRIER+CRS_DEP_TIME+DEP_TIME_BLK+CRS_ARR_TIME+ARR_TIME_BLK+CRS_ELAPSED_TIME+AIR_TIME+DISTANCE+PASSENGERS+EMPFULL+EMPPART+EMPTOTAL+EMPFTE+NET_INCOME+OP_REVENUES+prcp+snow+tavg+tmax+tmin+wt01+wt02+wt03+wt04+wt05+wt06+wt07+wt08+wt09+wt10+wt11+prcp.DEST+snow.DEST+tavg.DEST+tmax.DEST+tmin.DEST+wt01.DEST+wt02.DEST+wt03.DEST+wt04.DEST+wt05.DEST+wt06.DEST+wt07.DEST+wt08.DEST+wt09.DEST+wt10.DEST+wt11.DEST+nsmiles+fare+carrier_lg+large_ms+fare_lg+carrier_low+lf_ms+fare_low, data = lm_subset)
+require(dplyr)
+FlightDelays90 = select(FlightDelays90, -Route)
+lm_subset = sample_n(FlightDelays90, 100000)
+lm = tobit(ARR_DELAY ~ ORIGIN + Num_Flights+Latitude+Longitude+DEST+YEAR+QUARTER+MONTH+DAY_OF_MONTH+DAY_OF_WEEK+CARRIER+CRS_DEP_TIME+DEP_TIME_BLK+CRS_ARR_TIME+ARR_TIME_BLK+CRS_ELAPSED_TIME, left = -22, right = 39, data = lm_subset)
 
 summary(lm)
+plot(lm)
+
+quantile(FlightDelaysFinal$ARR_DELAY, c(0.1,.9))
+FlightDelays90 = filter(FlightDelaysFinal, ARR_DELAY <=39 & ARR_DELAY >=-22)
+
+
+
+AIR_TIME+I(DISTANCE^1/2)+PASSENGERS+EMPFULL+EMPPART+EMPTOTAL+EMPFTE+NET_INCOME+OP_REVENUES+prcp+snow+tavg+tmax+tmin+wt01+wt02+wt03+wt04+wt05+wt06+wt07+wt08+wt09+wt10+wt11+prcp.DEST+snow.DEST+tavg.DEST+tmax.DEST+tmin.DEST+wt01.DEST+wt02.DEST+wt03.DEST+wt04.DEST+wt05.DEST+wt06.DEST+wt07.DEST+wt08.DEST+wt09.DEST+wt10.DEST+wt11.DEST+nsmiles+fare+carrier_lg+large_ms+fare_lg+carrier_low+lf_ms+fare_low+prcp*prcp.DEST+snow*snow.DEST+tavg*tavg.DEST+tmin*tmin.DEST+wt01*wt01.DEST+wt02*wt02.DEST+wt03*wt03.DEST+wt04*wt04.DEST+wt05*wt05.DEST+wt06*wt06.DEST+wt07*wt07.DEST+wt08*wt08.DEST+wt09*wt09.DEST+wt10*wt10.DEST+wt11*wt11.DEST+Latitude*Longitude
