@@ -9,6 +9,8 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{wrapfig}
+\usepackage{float}
+\usepackage{subcaption}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -41,11 +43,16 @@
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\Lagr}{\mathcal{L}}
 \newcommand\tab[1][1cm]{\hspace*{#1}}
-
+\pagestyle{empty}
 \begin{document}
+\pagestyle{empty}
 \maketitle
-\tableofcontents
+ \pagenumbering{gobble} \tableofcontents \thispagestyle{empty}
+\pagestyle{empty}
 \chapter{Introduction}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
 \tab Reliable transportation supports a strong economy by facilitating the rapid and timely exchange of goods and services and bolstering tourism revenue. In the United States in 2018, the transportation industry accounted for \$648 billion per year, which was 3.16\% of the GDP [cite]. Worldwide, the aviation industry contributes \$2.7 trillion (3.6\%) of the world's GDP. In fact, it is projected that global air transporation will support \$5.7 trillion of the global economy [cite]. A key metric for evaluating the efficiency of airline industry production is flight delay time. In 2018, flight delays led to an economic loss of 31.2 billion dollars[cite]. For individual companies, delays can influence consumer choice, and for the industry itself, unmitigated delays can impel consumers to switch to substitute goods, such as automotive or rail-based transport. \\
 \tab Therefore, a major goal of this project is to analyze flight delays and diagnose areas for improvement. We intend to create models using the provided dataset as well as publicly available data that can accurately predict future delays. In doing so, we can hopefully uncover significant and controllable covariates that can help guide airline companies to reduce flight delays. 
 \chapter{Executive Summary}
@@ -84,30 +91,36 @@
 	\section{Distribution of Flight Delays}
 	
 	\tab The dataset provided information on flights from 17 different carriers along 6,684 unique routes being flown between a combination of 362 airports in the United States (including Alaska and Hawaii and a couple airports in US territories such as Guam). 3,814,366 out of the 10,915,495 flights (~35\%) had some form of arrival delay. A histogram of all arrival delays is shown in \underline{Fig 4.1}. We observe that most "early" flights are not incredibly early compared to the frequency at which late flights can become "significantly" delayed, say more than 30 minutes. Clearly, the data is strongly right-skewed. To correct the skewness (to meet assumptions for our analysis), a cube-root transformation was performed, but subsequent Shapiro-Wilk tests provided strong evidence against normality for this transformation, so we turned to other methods, as will be discussed in chapter 5. To heuristically assess dependence between covariates and late arrivals, we examined various conditional distributions, as follows.\\
-	\begin{wrapfigure}{l}{0.45\textwidth}
+	\begin{wrapfigure}{l}{0.55\textwidth}
 	\centering
-	 \includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
-	 \caption{Fig 1 - Histogram of arrival time for all observations in the dataset}
+	 \includegraphics[width = .5 \textwidth, height = 8cm]{../figures/PLOTS FOR REPORT/Chapter 4/Figure 4.1}
+	 \caption{ Histogram of arrival time for all observations in the dataset}
 	 \end{wrapfigure}
 	 
 		\subsection{Geographic Distribution of Flight Delays}
 		
-			\tab In \underline{Fig 4.21}, the routes that have various average intervals of delay time are shown. Note straight lines are drawn for simplicity; the actual flight most likely flew a non-linear path toward the destination. Also, early arrivals are given a delay time of 0 in the computation of the mean. We observe many things. Almost all routes have an average delay that is positive. This spotlights the nature of this project: to focus on remedying delays to improve customer satisfaction and increase airline revenue. For the routes with a mean delay between 30 and 45 minutes, most of the delays are clustered on the eastern US with most of the routes either beginning or ending in the San Francisco, New York, or southern Florida regions. For more severe delays of 45+ minutes, these routes encompass more cross-country flights. Furthermore, it can be seen that an airport in the northeast, most likely JFK in New York, is involved in a lot of severe flight delays. Next, in \underline{Fig 4.22}, the average delays at certain airports is depicted. We see further evidence that the more problematic delays are centered in bigger cities, particularly those on the east and west coast. \underline{Fig 4.23} illustrates the relationship between the popularity of an airport and the amount of delays. As expected, airports that crank out more flights have a higher average delay time. This raises the question: Does more flights simply give airports a higher probability of having delays (by random chance), or does an increase in flights also bring in other factors that \textit{cause} an increase in flight delays. In more broad terms, what factors correlate with delays, and which ones can be controlled by the airlines?\\
-			\begin{wrapfigure}{r}{0.45\textwidth}
+			\tab In \underline{Fig 4.2}, the routes that have various average intervals of delay time are shown. Note straight lines are drawn for simplicity; the actual flight most likely flew a non-linear path toward the destination. Also, early arrivals are given a delay time of 0 in the computation of the mean. We observe many things. Almost all routes have an average delay that is positive. This spotlights the nature of this project: to focus on remedying delays to improve customer satisfaction and increase airline revenue. 
+			\begin{figure}[h]
 			\centering
-	 		\includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
-	 		\caption{Fig 2 - Figures showing the geographic distribution of flight delays by delay length and airport usage}
-	 		\end{wrapfigure}
-	 		
+	 		\includegraphics[width = .9 \textwidth]{../figures/PLOTS FOR REPORT/Chapter 4/Figure 4.21}
+	 		\caption{Geographic distribution of flight delays by delay length and airport usage}
+	 		\end{figure}\\
+	 		\tab For the routes with a mean delay between 30 and 45 minutes, most of the delays are clustered on the eastern US with most of the routes either beginning or ending in the San Francisco, New York, or southern Florida regions. For more severe delays of 45+ minutes, these routes encompass more cross-country flights. Furthermore, it can be seen that an airport in the northeast, most likely JFK in New York, is involved in a lot of severe flight delays. \underline{Supplementary Graph 2}, the average delays at certain airports is depicted. We see further evidence that the more problematic delays are centered in bigger cities, particularly those on the east and west coast. \underline{Supplementary Graph 3} illustrates the relationship between the popularity of an airport and the amount of delays. As expected, airports that crank out more flights have a higher average delay time. This raises the question: Does more flights simply give airports a higher probability of having delays (by random chance), or does an increase in flights also bring in other factors that \textit{cause} an increase in flight delays. In more broad terms, what factors correlate with delays, and which ones can be controlled by the airlines?\\
 		\subsection{Temporal Distribution of Flight Delays}
 		
-			\tab \underline{Fig 4.31}, \underline{Fig 4.32}, \underline{Fig 4.33}, and \underline{Fig 4.34} display the distribution of flight delays for quarter, month, day of the week, and time of day, respectively. Note that because our data contained a year and a half’s worth of observations, the frequency of delays for quarter 1 and 2 are higher than other time periods that were not recorded twice. The histograms appear roughly symmetric with a slight right-skew. Specifically, early arrivals appear to follow a normal distribution while it transitions to an exponential distribution once delays become positive. We will explore this specific observation in the first section of our next chapter. Regardless, the general form of the distribution across these time factors does not change significantly. To further investigate the role of temporal factors in flight delays, we produced a number of coplots, which show several interesting seasonal patterns, as depicted in \underline{Fig 4.35}.\\
-			\begin{wrapfigure}{l}{0.45\textwidth}
-			\centering
-	 		\includegraphics[width = .45 \textwidth]{../figures/LateArrivalsHistogram}
-	 		\caption{Fig 3 - Histograms of ARR DELAY by time of day, day of week, month, and quarter}
-	 		\end{wrapfigure}
-	 		
+			\tab \underline{Fig 4.3} shows the distribution of flight delays by quarter. Note the similarity to the marginal distribution. Distributions by time of day and day of week are shown in the \underline{Supplementary Graph 4}. Note that because our data contained a year and a half’s worth of observations, the frequency of delays for quarter 1 and 2 are higher than other time periods that were not recorded twice. The histograms appear roughly symmetric with a slight right-skew. Specifically, early arrivals appear to follow a normal distribution while it transitions to an exponential distribution once delays become positive. We will explore this specific observation in the first section of our next chapter. Regardless, the general form of the distribution across these time factors does not change significantly. \\
+		\begin{wrapfigure}{H}{0.45\textwidth}
+		\centering
+		\includegraphics[width = .45 \textwidth]{../figures/PLOTS FOR REPORT/Chapter 4/Figure 4.31}
+		\caption{ Histograms of arrival time by quarter}
+		\end{wrapfigure}
+	
+		\begin{figure}
+		\centering
+		\includegraphics[width = .33 \textwidth]{../figures/heterogeneity_quarters}\includegraphics[width = .33 \textwidth]{../figures/heterogeneity_dayofweek}\\ \includegraphics[width = .33 \textwidth]{../figures/heterogeneity_timeofday}
+		\caption{Heterogeneity by quarter, day of week, and time of day}
+		\end{figure}
+	To further investigate the role of temporal factors in flight delays, we produced a number of coplots, which show several interesting seasonal patterns, as depicted in \underline{Fig 4.35}.\\	 		
 		\subsection{Weather-based Distribution of Flight Delays}
 		
 			\tab This most obvious factor that most likely affects flight delays is the weather. Therefore, we analyzed the conditional distributions of flight delays given average temperature, precipitation, and the presence of various rare weather events. These are described in \underline{Fig 4.41}, \underline{Fig 4.42}, and \underline{Fig 4.43}, respectively. In the scatterplot depicting rain, we see a lack of evidence that more extreme temperatures correlate with increased delays. This would be evident if the scatterplot showed a parabolic pattern, which is not seen. Surprisingly, we see the same idea in the scatterplot of precipitation. Contrary to intuition, as the amount of precipitation increase, there is no visual subsequent increase in the delay time. Lastly, \underline{Fig 4.43} demonstrates that some dangerous weather events have a slightly bigger effect on delay times than others. For example, the distributions of “ice, sleet and hail” and “blowing or drifting snow” have more area in their right-tails. This is indicative of more occurrences where these events caused more significant delays. Besides these difference in tail-density, the overall shape remains very similar. \\
@@ -219,7 +232,7 @@
 \chapter{Business Recommendations}
 	\section{Differences Between Carriers}
 	\tab As we saw in our analysis of variance in our data exploration, the average delay times across carriers do differ. More popular carriers such as American Airlines do incur more delays than say, a lesser known airline such as Pinnacle Airlines. For large carriers, Alaska Airlines and Delta do a very solid job of alleviating delays. It is also evident the more flights an airport hosts, the more chance there is at a delay occurring. From a customer’s point of view, one could simply avoid flying with the most popular airlines if the cost and quality level of another airline is more tolerable. From this same perspective, flying during less delay-prone times such as leaving late at night, flying during the months of October and November, or leaving on a Saturday would help families and the like minimize their chances of experiencing delays. 
-	\section{Important Variables to Keep an Eye On}
+	\section{Important covariates}
 	\tab As a result from playing around so much with our covariates, we have a solid idea of what does and what doesn’t go into predicting a flight delay. Surprisingly, weather has a minimal affect on delays. Even more, drastic weather events are rare in the grand scheme of things, and so they would not be the best factor to predict a future delay. The time of the flight (when in the year, when during the week, and when in the day) does indeed tend to be highly correlated with late flights. Airlines should schedule flights as to avoid propagation of delays throughout the day. Delay propagation occurs when a delayed flight early on in the day creates a ripple effect of increasingly delayed flights as the day progresses. In a sense, a delay becomes contagious as it is quite literally spread across the country and different airports. Thus, it is advantageous to commit resources to ensuring early flights do not get delayed. As the number of flights that take off toward the evening and into the night decreases, the airlines can catch-up during these phases to start fresh the next day. Survey data conducted on a random sample of customers could provide airlines with information regarding passengers’ willingness to fly early in the morning or late in the evening. Thus, data on clusters of flyers could be analyzed to move certain flights to different time blocks while maximizing the amount of people who would be willing to purchase tickets for these. Delays simply comes down to business of the airport. The more balls are thrown into the air, the more likely one will slip the hand and fall to the ground. 
 \chapter{Closing Thoughts}
 	\section{Retrospect}
