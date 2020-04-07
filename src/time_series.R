@@ -25,7 +25,27 @@ g1 <- autoplot(forecast_multi) +
   coord_cartesian(xlim = c(75, 82), ylim=c(-20,25))
 plot(g1)
 
+#####################3
+multi_season = msts(FlightDelaysBootstrap$ARR_DELAY, seasonal.periods = c(19,19*7,19*91.3125, 19*365.25)) #hourly AND weekly
+summary(multi_season)
 
+g1<- autoplot(multi_season_decomp) + 
+  ggtitle("Multi-season forecast") + 
+  xlab("Time in years") +
+  ylab("Arrival time")+
+  coord_cartesian(xlim = c(5,6))
+
+plot(g1)
+plot(forecast_multi)
+multi_season_decomp = decompose(multi_season)
+multi_season_model = auto.arima(multi_season, D = 1)
+plot(decompose(multi_season))
+forecast_multi = forecast(multi_season, h=1596)
+g1 <- autoplot(forecast_multi) + 
+  ggtitle("Hourly and Weekly Seasons: Forecast") + 
+  ylab("y") +
+  coord_cartesian(xlim = c(75, 82))
+plot(g1)
 
 ######################################## HOURLY DELAY
 
