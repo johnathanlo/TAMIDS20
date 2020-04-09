@@ -1,5 +1,5 @@
-Texas A&M Institute of Data Science
-TAMIDS Data Science Competition - Spring 2020
+Texas A&M Institute of Data Science \\
+TAMIDS Data Science Competition - Spring 2020 \\
 Team Big Data Energy
 Members: Isaac Ke and Johnathan Lo
 Advisor: Dr. Huiyan Sang
