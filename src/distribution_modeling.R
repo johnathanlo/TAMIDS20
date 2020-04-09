@@ -180,6 +180,19 @@ sorted = as.vector(sort(rexp(nrow(subset), lambda_est), decreasing=T))
 exp_test = data.frame(index = 1:nrow(subset),theoretical = sorted, data = as.vector(sort(subset$ARR_DELAY_NEW, decreasing=T)))
 ggplot(exp_test) + geom_point(aes(x=index, y=theoretical, color='blue')) + geom_point(aes(x=index, y=data, color='red')) 
 
+#########################comparisons with mixture
+FlightDelays05 <- sample_frac(FlightDelays_Final, .05)
+carrierAA <- filter(FlightDelays05, CARRIER == "AA")
+originABE <- filter(FlightDelays05, ORIGIN == "ABE")
+highprcp <- filter(FlightDelays05, prcp >500)
+
+carrierAA_MLE <- MLE_BDEDIST(carrierAA$ARR_DELAY)
+originABE_MLE <- MLE_BDEDIST(originABE$ARR_DELAY)
+highprcp_MLE <- MLE_BDEDIST(highprcp$ARR_DELAY)
+
+PLOT_BDE(carrierAA_MLE$par, 67724, data = carrierAA$ARR_DELAY)
+PLOT_BDE(originABE_MLE$par, 307, data = originABE$ARR_DELAY)
+PLOT_BDE(highprcp_MLE$par, 3475, data = highprcp$ARR_DELAY)
 #######################################################################
 
 #### LOGISTIC REGRESSION WITH WEATHER DATA
