@@ -26,6 +26,7 @@ g1 <- autoplot(forecast_multi) +
 plot(g1)
 
 #####################3
+FlightDelaysBootstrap = sample_n(FlightDelaysBootstrap, 10)
 multi_season = msts(FlightDelaysBootstrap$ARR_DELAY, seasonal.periods = c(19,19*7,19*91.3125, 19*365.25)) #hourly AND weekly
 summary(multi_season)
 
