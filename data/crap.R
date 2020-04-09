@@ -70,6 +70,13 @@ shapiro.test(sample((FlightDelays05$ARR_DELAY)^(1/3), 5000))
 
 hist((FlightDelays05$ARR_DELAY)^(1/3))
 MeanDelays_transform <- ifelse(MeanDelays_byRoute$avg<0, -(abs(MeanDelays_byRoute$avg)^(1/3)),abs(MeanDelays_byRoute$avg)^(1/3)) 
+hist(MeanDelays_transform)
+FlightDelays05_transform <- ifelse(FlightDelays05$ARR_DELAY<0, -(abs(FlightDelays05$ARR_DELAY)^(1/2)),abs(FlightDelays05$ARR_DELAY)^(1/2)) 
+qqnorm(FlightDelays05_transform)
+
+
+par(mfrow = c(2,1))
+hist(FlightDelays05_transform, breaks = 50)
 qqnorm(MeanDelays_transform[MeanDelays_transform<50])
 qqline(abs(MeanDelays_byRoute$avg[MeanDelays_byRoute$avg<50])^(1/3))
 
