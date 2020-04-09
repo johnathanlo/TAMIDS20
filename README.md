@@ -1,12 +1,12 @@
 
- # **TAMIDS Data Science Competition - Spring 2020** #<br/>
+ # **TAMIDS Data Science Competition - Spring 2020** <br/>
 [Texas A&M Institute of Data Science] <br/>
 [Competition Details](https://tamids.tamu.edu/2020/02/10/2020-data-science-competition-call/)<br/>
-## Team Big Data Energy ##<br/>
+## Team Big Data Energy <br/>
 <br/>
-* Members: Isaac Ke and Johnathan Lo<br/>
-* Advisor: Dr. Huiyan Sang<br/>
-* Februar 12 - April 22, 2020<br/>
+*Members: Isaac Ke and Johnathan Lo<br/>
+*Advisor: Dr. Huiyan Sang<br/>
+*Februar 12 - April 22, 2020<br/>
 <br/>
 
   Reliable transportation supports a strong economy by facilitating the rapid and timely exchange of goods and services and bolstering tourism revenue. In 2018, the United States transportation industry accounted for $648 billion, which was 3.16% of the GDP. Worldwide, the aviation industry contributes $2.7 trillion (3.6%) of the world’s GDP. In fact, it is projected that by 2036, global air transportation will support $5.7 trillion of the global economy. A key metric for evaluating the eﬃciency of airline industry production is ﬂight delay time. In 2018, ﬂight delays led to an economic loss of 31.2 billion dollars. For individual companies, delays can inﬂuence consumer choice, and for the industry itself, unmitigated delays can impel consumers to switch to substitute services such as automotive or rail-based transport. Therefore, a major goal of this project was to analyze ﬂight delays and diagnose areas for improvement. We intended to create models using the provided datasets as well as other publicly available data that can accurately predict future delays. In doing so, our hope was to uncover signiﬁcant and controllable factors that can help guide airline companies to reduce ﬂight delays.
