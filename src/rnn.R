@@ -1,3 +1,0 @@
-require(rnn)
-
-?trainr
