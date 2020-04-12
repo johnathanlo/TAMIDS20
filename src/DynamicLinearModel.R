@@ -23,7 +23,6 @@ PredictDelays <- function(obs){
   obs$arima_weekly_res = eta$pred[steps]
   lin <- predict(lm_res_weekly,newdata = obs )
   
-  return (eta+lin)
+  return (eta$pred[steps] +lin)
 }
-
 
